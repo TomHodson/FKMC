@@ -23,12 +23,13 @@ setup(
     author='Tom Hodson',
     author_email='tch14@iac.ac.uk',
     packages=find_packages(),
+    include_package_data=True,
     zip_safe = False,
     ext_modules=cythonize(extensions, annotate=True, language_level=3),
     install_requires=['Click'],
     entry_points='''
         [console_scripts]
-        run_mcmc=jobmanager:run_mcmc_command
+        run_mcmc=FKMC.jobmanager:run_mcmc_command
     ''',
 )
 

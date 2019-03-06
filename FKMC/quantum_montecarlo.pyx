@@ -9,8 +9,8 @@ from scipy import linalg
 
 import math
 
-from .stats import moments, binned_error_estimate, moment_errors
 from .shared_mcmc_routines cimport initialise_state_representations, c_classical_energy, invert_site_inplace, incremental_energy_difference, spin_spin_correlation
+from .stats import moments, binned_error_estimate, moment_errors
 from .shared_mcmc_routines import interaction_matrix
 from .wrapped_C_functions cimport diagonalise_scipy
 

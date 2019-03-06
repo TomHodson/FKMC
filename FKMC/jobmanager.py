@@ -98,7 +98,8 @@ def setup_mcmc(config, working_dir = Path('./'), overwrite = False):
                 result_file.create_dataset(name, data = np.zeros(data_shape)*np.nan, shape = data_shape, dtype = val.dtype)
 
     #update or create the script because the number of jobs to do might have changed
-    cx1_wdir = '$HOME' / working_dir.resolve().relative_to('/workspace/tch14/cx1_home/')
+    #cx1_wdir = '$HOME' / working_dir.resolve().relative_to('/workspace/tch14/cx1_home/')
+    cx1_wdir = working_dir.resolve()
     
     script = open('../sample_runscript.sh').read().format(working_dir=cx1_wdir, N_jobs=N_jobs, name = working_dir.stem)
     with open(working_dir / 'runscript.sh', 'w') as f:
