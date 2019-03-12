@@ -148,8 +148,13 @@ def setup_mcmc(config, working_dir = Path('./'), overwrite = False):
     #cx1_wdir = '$HOME' / working_dir.resolve().relative_to('/workspace/tch14/cx1_home/')
     cx1_wdir = working_dir.resolve()
     
-    script = open('../sample_runscript.sh').read().format(working_dir=cx1_wdir, N_jobs=N_jobs, name = working_dir.stem)
-    with open(working_dir / 'runscript.sh', 'w') as f:
+    script = open('./CX1_runscript.sh').read().format(working_dir=cx1_wdir, N_jobs=N_jobs, name = working_dir.stem)
+    with open(working_dir / 'CX1_runscript.sh', 'w') as f:
+        f.write(script)
+        print(script)
+        
+    script = open('./CMTH_runscript.sh').read().format(working_dir=cx1_wdir, N_jobs=N_jobs, name = working_dir.stem)
+    with open(working_dir / 'CMTH_runscript.sh', 'w') as f:
         f.write(script)
         print(script)
 
