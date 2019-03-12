@@ -104,7 +104,7 @@ def setup_mcmc(config, working_dir = Path('./'), overwrite = False):
     #check that we're not trying to loop over parameters that affect the shape of any of the outputs
     bad_combos = dict(
         output_history=['N_steps'],
-        output_corrrelator=['N_system'],
+        output_correlator=['N_system'],
         output_state=['N_steps','N_system'],
     )
     loop_k = loop_keys(config)
