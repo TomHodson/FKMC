@@ -113,7 +113,7 @@ def setup_mcmc(config, working_dir = Path('./'), overwrite = False):
         for param in bad_params:
             if config[flag] and param in loop_k:
                 logger.warning(f"Can't have both {flag} = True and loop over {param}")
-                bad = true
+                bad = True
     if bad: return
 
     working_dir.mkdir(parents=True, exist_ok=True)
@@ -321,7 +321,7 @@ def gather_mcmc(working_dir, do_all = False):
         jobs_remaining_to_copy = np.where(config['copied_in'] == 0)[0]
         logger.info(f'missing : {missing}')
         logger.info(f'Jobs attempted this time: {len(jobs_to_copy)}')
-        logger.info(f'Overall completion: {total_jobs(config) - len(jobs_remaining_to_copy)} / {total_jobs(config)}')
+        logger.info(f'Overall completion: {total_jobs(config)[0] - len(jobs_remaining_to_copy)} / {total_jobs(config)}')
         logger.info(f'File size: {result_filename.stat().st_size / 10**9:.2f}Gb')
         logger.debug(f'Config: {dict(result_file.attrs)}')
         
