@@ -6,7 +6,7 @@ import time
 import logging
 import sys
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 from . import quantum_montecarlo
 
@@ -48,16 +48,17 @@ def total_jobs(config):
 #run_mcmc will need an equivalent of gather now
 #make sure gather returns the right thing
 
-def static_config(configs):
+def loop_keys(config): return set(config['outer_loop']) | set(config['inner_loop'])
+
+def static_config(config):
     """return all the keys from a config that doesn't need to be looped over"""
-    loop_keys = set(configs['outer_loop']) | set(configs['inner_loop'])
-    return {k:v for k,v in configs.items() if k not in loop_keys}
+    return {k:v for k,v in config.items() if k not in loop_keys(config)}
 
 def loop_config(id, loop_name, config):
     keys = config[loop_name]
     
     max_id = np.array([len(config[v]) for v in keys]).prod()
-    assert(id < total)
+    assert(id < max_id)
     
     #starting from the innermost loop work outwards
     indices = []
@@ -65,7 +66,7 @@ def loop_config(id, loop_name, config):
 
     id_remainder = id
     for key in keys[::-1]:
-        values = configs[key]
+        values = config[key]
         id_remainder, i  = divmod(id_remainder, len(values))
         this_config[key] = values[i]
         indices.append(i)
@@ -97,8 +98,23 @@ def setup_mcmc(config, working_dir = Path('./'), overwrite = False):
     logger.info(f'Working in: {working_dir}')
     
     if 'loop_over' in config:
-        logger.info(f"'Loop_over' shouldn't be in the config anymore")
+        logger.warning(f"'Loop_over' shouldn't be in the config anymore")
         return
+    
+    #check that we're not trying to loop over parameters that affect the shape of any of the outputs
+    bad_combos = dict(
+        output_history=['N_steps'],
+        output_corrrelator=['N_system'],
+        output_state=['N_steps','N_system'],
+    )
+    loop_k = loop_keys(config)
+    bad = False
+    for flag, bad_params in bad_combos.items():
+        for param in bad_params:
+            if config[flag] and param in loop_k:
+                logger.warning(f"Can't have both {flag} = True and loop over {param}")
+                bad = true
+    if bad: return
 
     working_dir.mkdir(parents=True, exist_ok=True)
     (working_dir / 'jobs').mkdir(parents=True, exist_ok=True)
@@ -179,13 +195,13 @@ def run_mcmc(job_id,
     
     ##get the job file
     (working_dir / 'jobs').mkdir(exist_ok = True)
-    job_file = working_dir / 'jobs' / f"job_{job_id}.hdf5"
-    if job_file.exists() and overwrite == False:
+    job_file_path = working_dir / 'jobs' / f"job_{job_id}.hdf5"
+    if job_file_path.exists() and overwrite == False:
         logger.info(f'Job File already exists, not overwriting it')
         return
 
     ##figure out the outer_config
-    static_config = static_config(configs)
+    static = static_config(config)
     outer_config = loop_config(job_id, 'outer_loop', config)
 
     logger.info(f'This jobs outer_config is {outer_config}')
@@ -193,26 +209,30 @@ def run_mcmc(job_id,
     starttime = time.time()
     
     #open the file and create the datasets needed
-    with h5py.File(job_file, "w") as f:
-        f.attrs.update(outer_config)
+    with h5py.File(job_file_path, "w") as job_file:
+        job_file.attrs.update(outer_config)
         
         #do the inner loop
-        for inner_index in range(inner_loop_shape.prod()):
+        for inner_index in range(inner_loop_shape(config).prod()):
             inner_config = loop_config(inner_index, 'inner_loop', config)
-            this_config = {**static_config, **outer_config, **inner_config}
+            this_config = {**static, **outer_config, **inner_config}
             results = mcmc_routine(**this_config)
+            idx = this_config['inner_loop_indices']
+            logger.info(f"Starting Inner Job: {inner_index} indices: {idx}")
             
             #the first time, initialise the file
             if inner_index == 0:
+                logger.info(f"Since it's the first one, creating the datasets:")
                 for name, val in results.items():
                     data_shape = tuple(np.append(inner_loop_shape(config), val.shape))
-                    result_file.create_dataset(name, data = np.zeros(data_shape)*np.nan, shape = data_shape, dtype = val.dtype)
+                    job_file.create_dataset(name, data = np.zeros(data_shape)*np.nan, shape = data_shape, dtype = val.dtype)
+                    logger.info(f"Dataset: name: {name}, data.shape {data_shape}, dtype: {val.dtype}")
                 
                 
             #the rest of the time, just copy the data in
             for name, result in results.items():
-                idx = this_config['indices']
-                result_file[name][idx] = results
+                
+                job_file[name][idx] = result
     
     runtime = np.array([time.time() - starttime,])
     logger.info(f"MCMC routine finished after {runtime[0]:.2f} seconds")
@@ -277,16 +297,17 @@ def gather_mcmc(working_dir, do_all = False):
             try:
                 with h5py.File(job_filename, 'r') as job_file:
                     #loop over the datasets, ie energy, magnetisation etc
-                    for dataset_name, val in job_file.items():
+                    for index, (dataset_name, val) in enumerate(job_file.items()):
                         dataset = result_file[dataset_name]
 
                         indices = tuple(job_file.attrs['outer_loop_indices'])
 
                         #label each axis of the dataset
-                        #for dim,name in zip(dataset.dims,np.append(config['outer_loop'],config['inner_loop'])):
-                        #    dim.label = name
+                        if index == 0:
+                            for dim,name in zip(dataset.dims,np.append(config['outer_loop'],config['inner_loop'])):
+                                dim.label = name
 
-                        logger.debug(f'{dataset_name} with indices {indices}, value has shape {val.shape}')
+                        logger.debug(f'{dataset_name}, indices:{indices}, val.shape {val.shape}, dataset[indices].shape: {dataset[indices].shape}')
                         dataset[indices] = val
 
                     #indicate that this data has been copied into the result file sucessfully
