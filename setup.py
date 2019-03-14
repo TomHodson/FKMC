@@ -23,7 +23,11 @@ setup(
     author='Tom Hodson',
     author_email='tch14@iac.ac.uk',
     packages=find_packages(),
-    include_package_data=True,
+    #include_package_data=True,
+    data_files=[
+        ('',['CMTH_runscript.sh']),
+        ('',['CX1_runscript.sh']),
+    ],
     zip_safe = False,
     ext_modules=cythonize(extensions, annotate=True, language_level=3),
     install_requires=['Click'],

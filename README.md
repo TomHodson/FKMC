@@ -2,7 +2,7 @@
 ## Things to do:
 - change the jobs to save their state at intermediate intervals
 - add tempering
-- add a way to batch jobs so that there are fewer total jobs to run
+- Done: add a way to batch jobs so that there are fewer total jobs to run
 - improve the visualisation of which jobs have produced errors, output logs and output results
 - Modify setupmcmc and gathermcmc so that the results.hdf5 file made by gather rather than by setup
 
