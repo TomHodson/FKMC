@@ -126,7 +126,7 @@ cpdef void quantum_cython_mcmc_helper(
             numbers[j] = number / N_system
             magnetisations[j] = magnetisation / N_system
 
-            if not q_energy_histogram is None: update_bins(eigenvalues, eigenvectors, q_energy_histogram, IPR_histogram, U*energy_min, U*energy_max)
+            if not q_energy_histogram is None: update_bins(eigenvalues, eigenvectors, q_energy_histogram, IPR_histogram, energy_min, energy_max)
             if not states is None: states[j] = state
             if not ts is None: ts[j] = t
             if not eigenvalue_hist is None: eigenvalue_hist[j] = eigenvalues
@@ -150,8 +150,8 @@ def quantum_cython_mcmc(
                 N_moments = 10, #how many moments of the data to calculate
                         
                 N_energy_bins= 500, #How many bins to use for energy histograms
-                energy_min = -2.5,
-                energy_max = 2.5, #the bounds of the energy histogram
+                energy_min = -5,
+                energy_max = 5, #the bounds of the energy histogram
                         
                 output_state = False,
                 output_correlator = False,
@@ -251,8 +251,8 @@ def quantum_cython_mcmc(
 
 
     if quantum: return_vals.update(dict(
-        q_energy_histogram_bins = np.linspace(energy_min*U, energy_max*U, N_energy_bins + 1),
-        q_energy_bounds = np.array([U*energy_min, U*energy_max]),
+        q_energy_histogram_bins = np.linspace(energy_min, energy_max, N_energy_bins + 1),
+        q_energy_bounds = np.array([energy_min, energy_max]),
     ))
         
     if output_history: return_vals.update({name:val for name,val in observables.items() if not val is None})

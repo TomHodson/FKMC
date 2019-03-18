@@ -1,8 +1,9 @@
 
 ## Things to do:
+- calculte the approx runtime as a function of system size and number of steps
+- add a way to print out useful information about a completed job datafile
 - change the jobs to save their state at intermediate intervals
 - add tempering
-- Done: add a way to batch jobs so that there are fewer total jobs to run
 - improve the visualisation of which jobs have produced errors, output logs and output results
 - Modify setupmcmc and gathermcmc so that the results.hdf5 file made by gather rather than by setup
 

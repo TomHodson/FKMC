@@ -148,12 +148,18 @@ def setup_mcmc(config, working_dir = Path('./'), overwrite = False):
     #cx1_wdir = '$HOME' / working_dir.resolve().relative_to('/workspace/tch14/cx1_home/')
     cx1_wdir = working_dir.resolve()
     
-    script = open('./CX1_runscript.sh').read().format(working_dir=cx1_wdir, N_jobs=N_jobs, name = working_dir.stem)
+    import pkg_resources
+    logger.info(pkg_resources.resource_listdir(__name__, "."))
+    cx1 = pkg_resources.resource_string(__name__, "CX1_runscript.sh").decode()
+    cmth = pkg_resources.resource_string(__name__, "CMTH_runscript.sh").decode()
+    
+    
+    script = cx1.format(working_dir=cx1_wdir, N_jobs=outer_loop_shape(config).prod(), name = working_dir.stem)
     with open(working_dir / 'CX1_runscript.sh', 'w') as f:
         f.write(script)
         print(script)
         
-    script = open('./CMTH_runscript.sh').read().format(working_dir=cx1_wdir, N_jobs=N_jobs, name = working_dir.stem)
+    script = cmth.format(working_dir=cx1_wdir, N_jobs=outer_loop_shape(config).prod(), name = working_dir.stem)
     with open(working_dir / 'CMTH_runscript.sh', 'w') as f:
         f.write(script)
         print(script)
@@ -191,11 +197,11 @@ def run_mcmc(job_id,
     ##load up the config into memory
     with h5py.File(result_file, "r") as f:
         config = dict(f.attrs)
-    logger.info(f'Loaded config')
+    logger.debug(f'Loaded config')
     
     ##get the routine warmed up
     routine_name = config['mcmc_routine']
-    logger.info(f'Executing routine {routine_name}')
+    logger.debug(f'Executing routine {routine_name}')
     mcmc_routine = routine_map[routine_name]
     
     ##get the job file
@@ -219,11 +225,12 @@ def run_mcmc(job_id,
         
         #do the inner loop
         for inner_index in range(inner_loop_shape(config).prod()):
+            inner_time = time.time()
             inner_config = loop_config(inner_index, 'inner_loop', config)
             this_config = {**static, **outer_config, **inner_config}
             results = mcmc_routine(**this_config)
             idx = this_config['inner_loop_indices']
-            logger.info(f"Starting Inner Job: {inner_index} indices: {idx}")
+            
             
             #the first time, initialise the file
             if inner_index == 0:
@@ -231,14 +238,15 @@ def run_mcmc(job_id,
                 for name, val in results.items():
                     data_shape = tuple(np.append(inner_loop_shape(config), val.shape))
                     job_file.create_dataset(name, data = np.zeros(data_shape)*np.nan, shape = data_shape, dtype = val.dtype)
-                    logger.info(f"Dataset: name: {name}, data.shape {data_shape}, dtype: {val.dtype}")
+                    logger.debug(f"Dataset: name: {name}, data.shape {data_shape}, dtype: {val.dtype}")
                 
                 
             #the rest of the time, just copy the data in
             for name, result in results.items():
-                
                 job_file[name][idx] = result
-    
+            
+            logger.info(f"Done: Inner Job: {inner_index} indices: {idx} runtime: {time.time() - inner_time:.2f} seconds")
+            
     runtime = np.array([time.time() - starttime,])
     logger.info(f"MCMC routine finished after {runtime[0]:.2f} seconds")
 
@@ -308,9 +316,10 @@ def gather_mcmc(working_dir, do_all = False):
                         indices = tuple(job_file.attrs['outer_loop_indices'])
 
                         #label each axis of the dataset
-                        if index == 0:
-                            for dim,name in zip(dataset.dims,np.append(config['outer_loop'],config['inner_loop'])):
-                                dim.label = name
+                        for dim,name in zip(dataset.dims,np.append(config['outer_loop'],config['inner_loop'])):
+                            dim.label = name
+                            #dataset.dims.create_scale(result_file.attrs[name], name)
+                            #dim.attach_scale(result_file.attrs[name])
 
                         logger.debug(f'{dataset_name}, indices:{indices}, val.shape {val.shape}, dataset[indices].shape: {dataset[indices].shape}')
                         dataset[indices] = val

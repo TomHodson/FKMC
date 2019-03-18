@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name {name}}
+#SBATCH --job-name {name}
 #SBATCH --time 0-10:00:00
 #SBATCH --mail-type END
 #SBATCH --mail-user tch14@imperial.ac.uk
