@@ -77,8 +77,8 @@ def loop_config(id, loop_name, config):
     
     return this_config
     
-def outer_loop_shape(config): return np.array([len(config[v]) for v in config['outer_loop']])
-def inner_loop_shape(config): return np.array([len(config[v]) for v in config['inner_loop']])
+def outer_loop_shape(config): return np.array([len(config[v]) for v in config['outer_loop']], dtype = np.int)
+def inner_loop_shape(config): return np.array([len(config[v]) for v in config['inner_loop']], dtype = np.int)
 
 def get_config(outer_index, inner_index, config):
     '''
@@ -135,13 +135,14 @@ def setup_mcmc(config, working_dir = Path('./'), overwrite = False):
         logger.info(f'Sample results:')
         for k,v in results.items():
             description = f'array(shape={v.shape}, dtype={v.dtype})' if type(v)==np.ndarray else v
-            logger.info(f'{k}: {description}')
+            logger.debug(f'{k}: {description}')
         
         looped_shape = np.append(outer_loop_shape(config), inner_loop_shape(config))
         with h5py.File(result_filename, "w") as result_file:
             result_file.attrs.update(config)
             for name, val in results.items():
                 data_shape = tuple(np.append(looped_shape, val.shape))
+                logger.debug(f'create_dataset: name: {name}, shape: {data_shape}, type: {val.dtype}')
                 result_file.create_dataset(name, data = np.zeros(data_shape)*np.nan, shape = data_shape, dtype = val.dtype)
 
     #update or create the script because the number of jobs to do might have changed
@@ -208,7 +209,7 @@ def run_mcmc(job_id,
     (working_dir / 'jobs').mkdir(exist_ok = True)
     job_file_path = working_dir / 'jobs' / f"job_{job_id}.hdf5"
     if job_file_path.exists() and overwrite == False:
-        logger.info(f'Job File already exists, not overwriting it')
+        logger.info(f'Job File "{job_file_path}" already exists, not overwriting it')
         return
 
     ##figure out the outer_config
@@ -245,7 +246,10 @@ def run_mcmc(job_id,
             for name, result in results.items():
                 job_file[name][idx] = result
             
+            #job_file.attrs['last_complete_inner_index'] = np.array([inner_index,])
+            job_file.flush()
             logger.info(f"Done: Inner Job: {inner_index} indices: {idx} runtime: {time.time() - inner_time:.2f} seconds")
+            
             
     runtime = np.array([time.time() - starttime,])
     logger.info(f"MCMC routine finished after {runtime[0]:.2f} seconds")

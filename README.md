@@ -1,5 +1,8 @@
 
 ## Things to do:
+- fix bug in the runtime
+- investigate the asymetric energy spectra
+- finish implementing last_complete_inner_index
 - calculte the approx runtime as a function of system size and number of steps
 - add a way to print out useful information about a completed job datafile
 - change the jobs to save their state at intermediate intervals
@@ -9,6 +12,11 @@
 
 ## Build:
 process outline in the build.sh file
+
+## Run a job
+- use the python setupscript 
+- remember to build
+- cd to the log dir and run qsub ../runscript
 
 ## Useful commands
 ### Setup up a custom jupyter server on on CX1 do
