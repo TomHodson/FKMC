@@ -1,7 +1,11 @@
 
 ## Things to do:
+- calculate the quantum expectation of n_c as well as n_f
+- do a plot of n vs mu to check that we're really at half filling
+- get it running on CMTH on slurm http://www.cmth.ph.ic.ac.uk/computing/software/slurm.html#slurm
+- figure out how Energy and IPR are normalised
 - fix bug in the runtime
-- investigate the asymetric energy spectra
+- investigate the asymetric energy spectra and the U/2 offset
 - finish implementing last_complete_inner_index
 - calculte the approx runtime as a function of system size and number of steps
 - add a way to print out useful information about a completed job datafile
@@ -9,6 +13,8 @@
 - add tempering
 - improve the visualisation of which jobs have produced errors, output logs and output results
 - Modify setupmcmc and gathermcmc so that the results.hdf5 file made by gather rather than by setup
+- get the dimensions working properly http://docs.h5py.org/en/stable/high/dims.html#dimension-scales
+- install a jupyter diffing tool https://github.com/jupyter/nbdime
 
 ## Build:
 process outline in the build.sh file

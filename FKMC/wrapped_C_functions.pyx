@@ -73,21 +73,23 @@ def diagonalise_mkl(double [::1] diagonals, double [::1] offdiagonals,
 from scipy.linalg import eigh_tridiagonal, LinAlgError
 
 cpdef diagonalise_scipy(double [::1] diagonals, double [::1] offdiagonals,
-                   double [::1] eigenvalues, double [:, ::1] eigenvects):
+                   double [::1] eigenvalues, double [:, ::1] eigenvects, double classical_energy):
     
     cdef int N = diagonals.shape[0]
     numpy_diag = np.asarray(<np.double_t[:N]> &diagonals[0])
     numpy_offdiag = np.asarray(<np.double_t[:N-1]> &offdiagonals[0])
+    numpy_vals = np.asarray(<np.double_t[:N]> &eigenvalues[0])
+    numpy_vecs = np.asarray(<np.double_t[:N, :N]> &eigenvects[0,0])
     
-    cdef double[:] vals #so that cython knows what's being returned from eigh_tridiagonal
-    cdef double[:, :] vecs
+    #cdef double[:] vals #so that cython knows what's being returned from eigh_tridiagonal
+    #cdef double[:, :] vecs
     
     
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     converged = False
     try:
-        vals, vecs = eigh_tridiagonal(d=numpy_diag, e=numpy_offdiag, lapack_driver = 'stev')
+        numpy_vals, numpy_vecs = eigh_tridiagonal(d=numpy_diag, e=numpy_offdiag, lapack_driver = 'stev')
         converged = True
     except LinAlgError as e:
         logger.info(f'LinAlgError: {e}')
@@ -96,8 +98,8 @@ cpdef diagonalise_scipy(double [::1] diagonals, double [::1] offdiagonals,
     
     if not converged:
         logger.info(f'Trying STEMR instead of STEV')
-        vals, vecs = eigh_tridiagonal(d=numpy_diag, e=numpy_offdiag, lapack_driver = 'stemr')
+        numpy_vals, numpy_vecs = eigh_tridiagonal(d=numpy_diag, e=numpy_offdiag, lapack_driver = 'stemr')
         
-    
-    eigenvalues[:] = vals
-    eigenvects[:, :] = vecs
+    numpy_vals += classical_energy
+    #eigenvalues[:] = vals + classical_energy
+    #eigenvects[:, :] = vecs

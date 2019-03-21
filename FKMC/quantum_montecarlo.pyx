@@ -14,6 +14,19 @@ from .stats import moments, binned_error_estimate, moment_errors
 from .shared_mcmc_routines import interaction_matrix
 from .wrapped_C_functions cimport diagonalise_scipy
 
+'''
+Definitions:
+double[::1] state[i] = n_i
+double[::1] ut[i] = (2n_i - 1)
+double[::1] t[i] = (-1)^i (2n_i - 1)
+double [:, ::1] interaction_matrix[i,j] = U_ij = (-1)^(i-j) * V_ij ~= 1/|i-j|^alpha
+double [::1] background[i] = U_ij * t_j * U_ij * (-1)^i (2n_i - 1) = 2 * V_ij * ut[i]
+
+so the long ranged energy terms ends up being 1/4 * t_i U_ij t_j = 1/4 * t_i * b_i
+
+
+'''
+
 cpdef void quantum_cython_mcmc_helper(
                     #outputs
                     double [::1] classical_energies,
@@ -59,16 +72,20 @@ cpdef void quantum_cython_mcmc_helper(
             
     cdef double classical_energy, quantum_energy, number, magnetisation, new_quantum_energy 
     
+
+    
     with gil:
-        #diagonalise H and put the answers into eigenvalues and eigenvectors
-        if not eigenvalues is None:
-            update_matrix(U, state, diags)
-            diagonalise_scipy(diags, offdiags, eigenvalues, eigenvectors)
-            quantum_energy = average_quantum_energy(beta, eigenvalues)
-        
         classical_energy = c_classical_energy(mu, state, t, background)
         number = np.sum(state)
         magnetisation = np.sum(t)
+        
+        #diagonalise H and put the answers into eigenvalues and eigenvectors
+        #update_matrix(U, state, diags)
+        #diagonalise_scipy(diags, offdiags, eigenvalues, eigenvectors, classical_energy)
+        classical_energy = diagonalise_H(diags, offdiags, eigenvalues, eigenvectors, mu, U, state, ut, t, background)
+        quantum_energy = average_quantum_energy(beta, eigenvalues)
+        
+
 
     #variables to track changes in the above until the move is either accepted or rejected
     cdef double quantum_dF, classical_dF, dn, dt
@@ -81,24 +98,21 @@ cpdef void quantum_cython_mcmc_helper(
             #flip the site
             invert_site_inplace(site, alternating_signs, state, ut, t, background, interaction_matrix)
 
-
-            #Do quantum specific calculations
-            if not eigenvalues is None:
-                with gil:
-                    update_matrix(U, state, diags)
-                    diagonalise_scipy(diags, offdiags, new_eigenvalues, new_eigenvectors)
-            
-                #calculate all the changes, quantum_dF is the only one that can't be done incrementally
-                new_quantum_energy = average_quantum_energy(beta, new_eigenvalues)    
-                quantum_dF = new_quantum_energy - quantum_energy
-            else:
-                quantum_df = 0
-                
-            classical_dF = incremental_energy_difference(site, mu, ut, t, background)
+            #classical_dF = incremental_energy_difference(site, mu, ut, t, background)
             dn = ut[site]
             dt = 2 * t[site]
+            
+            #Do quantum specific calculations
+            with gil:
+                #update_matrix(U, state, diags)
+                #diagonalise_scipy(diags, offdiags, new_eigenvalues, new_eigenvectors, classical_energy + classical_dF)
+                
+                classical_energy = diagonalise_H(diags, offdiags, new_eigenvalues, new_eigenvectors, mu, U, state, ut, t, background)
 
-            dF = classical_dF + quantum_dF
+            #calculate all the changes, quantum_dF is the only one that can't be done incrementally
+            new_quantum_energy = average_quantum_energy(beta, new_eigenvalues)    
+            quantum_dF = new_quantum_energy - quantum_energy
+            dF = quantum_dF
 
             #if we must reject this move
             if dF > 0 and exp(- beta * dF) < random_numbers[i, site]:
@@ -109,7 +123,7 @@ cpdef void quantum_cython_mcmc_helper(
                 
             else:
                 #keep the site as it is and update the variables
-                classical_energy += classical_dF
+                #classical_energy += classical_dF
                 
                 quantum_energy = new_quantum_energy #different because this calculation isn't incremental
                 eigenvalues[:] = new_eigenvalues[:]
@@ -122,7 +136,7 @@ cpdef void quantum_cython_mcmc_helper(
         if i >= N_burn_in:
             j = i - N_burn_in
             classical_energies[j] = classical_energy / N_system
-            if not quantum_energies is None: quantum_energies[j] = quantum_energy / N_system
+            quantum_energies[j] = quantum_energy / N_system
             numbers[j] = number / N_system
             magnetisations[j] = magnetisation / N_system
 
@@ -299,5 +313,44 @@ cdef void update_matrix(double U, double[::1] state, double[::1] diags) nogil:
     N = state.shape[0]
     for i in range(N):
         diags[i] = U * (state[i] - 1/2)
+        
+        
+from scipy.linalg import eigh_tridiagonal, LinAlgError
+
+cpdef double diagonalise_H(
+                    double [::1] H_diags,
+                    double [::1] H_off_diags, 
+                    double [::1] eigenvalues, 
+                    double [:, ::1] eigenvects,
+                    double mu_star,
+                    double U,
+                    double[::1] state,
+                    double[::1] ut,
+                    double[::1] t,
+                    double [::1] background,
+                   ):
+    
+    cdef int N = state.shape[0]
+    cdef double F = 0
+    cdef int i
+    for i in range(N):
+        F += - U/4*ut[i] + 1/4*t[i]*background[i] - mu_star*state[i]
+        
+        H_diags[i] = 1/2 * U * ut[i] #= U * (state[i] - 1/2) This could be put in invert site inplace
+        H_off_diags[i] = -1
+    
+    numpy_diag = np.asarray(<np.double_t[:N]> &H_diags[0])
+    numpy_offdiag = np.asarray(<np.double_t[:N-1]> &H_off_diags[0])
+    
+    cdef double[:] vals #so that cython knows what's being returned from eigh_tridiagonal
+    cdef double[:, :] vecs
+
+    vals, vecs = eigh_tridiagonal(d=numpy_diag, e=numpy_offdiag, lapack_driver = 'stev')
+    for i in range(N):
+        vals[i] += F
+    
+    eigenvalues[:] = vals
+    eigenvects[:, :] = vecs
+    return F
         
     
