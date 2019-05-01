@@ -1,4 +1,4 @@
-#cython: boundscheck=False, wraparound=False, infer_types=True, initializedcheck=False, cdivision=True
+#cython: boundscheck=False, wraparound=False, infer_types=True, initializedcheck=False, cdivision=False
 
 cimport cython
 from libc.math cimport exp, log, floor
@@ -9,6 +9,7 @@ from scipy import linalg
 
 import math
 
+from FKMC.shared_mcmc_routines cimport invert_site_inplace
 from .shared_mcmc_routines cimport initialise_state_representations, c_classical_energy, invert_site_inplace, incremental_energy_difference, spin_spin_correlation
 from .stats import moments, binned_error_estimate, moment_errors
 from .shared_mcmc_routines import interaction_matrix
@@ -70,7 +71,7 @@ cpdef void quantum_cython_mcmc_helper(
                    ) nogil:
     
             
-    cdef double classical_energy, quantum_energy, number, magnetisation, new_quantum_energy 
+    cdef double classical_energy, quantum_energy, number, magnetisation, old_total_energy, new_total_energy 
     
 
     
@@ -80,10 +81,8 @@ cpdef void quantum_cython_mcmc_helper(
         magnetisation = np.sum(t)
         
         #diagonalise H and put the answers into eigenvalues and eigenvectors
-        #update_matrix(U, state, diags)
-        #diagonalise_scipy(diags, offdiags, eigenvalues, eigenvectors, classical_energy)
         classical_energy = diagonalise_H(diags, offdiags, eigenvalues, eigenvectors, mu, U, state, ut, t, background)
-        quantum_energy = average_quantum_energy(beta, eigenvalues)
+        old_total_energy = average_quantum_energy(beta, eigenvalues)
         
 
 
@@ -97,22 +96,16 @@ cpdef void quantum_cython_mcmc_helper(
         for site in range(N_system):
             #flip the site
             invert_site_inplace(site, alternating_signs, state, ut, t, background, interaction_matrix)
-
-            #classical_dF = incremental_energy_difference(site, mu, ut, t, background)
             dn = ut[site]
             dt = 2 * t[site]
             
             #Do quantum specific calculations
             with gil:
-                #update_matrix(U, state, diags)
-                #diagonalise_scipy(diags, offdiags, new_eigenvalues, new_eigenvectors, classical_energy + classical_dF)
-                
                 classical_energy = diagonalise_H(diags, offdiags, new_eigenvalues, new_eigenvectors, mu, U, state, ut, t, background)
 
             #calculate all the changes, quantum_dF is the only one that can't be done incrementally
-            new_quantum_energy = average_quantum_energy(beta, new_eigenvalues)    
-            quantum_dF = new_quantum_energy - quantum_energy
-            dF = quantum_dF
+            new_total_energy = average_quantum_energy(beta, new_eigenvalues)
+            dF = new_total_energy - old_total_energy
 
             #if we must reject this move
             if dF > 0 and exp(- beta * dF) < random_numbers[i, site]:
@@ -123,9 +116,7 @@ cpdef void quantum_cython_mcmc_helper(
                 
             else:
                 #keep the site as it is and update the variables
-                #classical_energy += classical_dF
-                
-                quantum_energy = new_quantum_energy #different because this calculation isn't incremental
+                old_total_energy = new_total_energy
                 eigenvalues[:] = new_eigenvalues[:]
                 eigenvectors[:, :] = new_eigenvectors[:, :]
                 
@@ -136,7 +127,7 @@ cpdef void quantum_cython_mcmc_helper(
         if i >= N_burn_in:
             j = i - N_burn_in
             classical_energies[j] = classical_energy / N_system
-            quantum_energies[j] = quantum_energy / N_system
+            quantum_energies[j] = old_total_energy / N_system
             numbers[j] = number / N_system
             magnetisations[j] = magnetisation / N_system
 
@@ -274,7 +265,7 @@ def quantum_cython_mcmc(
     
     return return_vals
 
-cdef double average_quantum_energy(double beta, double[::1] eigenvalues) nogil:
+cpdef double average_quantum_energy(double beta, double[::1] eigenvalues) nogil:
     cdef long N = eigenvalues.shape[0]
     cdef double energy = 0
     cdef int i
@@ -308,11 +299,11 @@ cpdef void update_bins(double [::1] energies, double[:, ::1] eigenvectors, doubl
         
         IPR_histogram[bin_index] += I4 / (I2*I2)
     
-cdef void update_matrix(double U, double[::1] state, double[::1] diags) nogil:
-    cdef int N
-    N = state.shape[0]
-    for i in range(N):
-        diags[i] = U * (state[i] - 1/2)
+#cdef void update_matrix(double U, double[::1] state, double[::1] diags) nogil:
+#    cdef int N
+#    N = state.shape[0]
+#    for i in range(N):
+#        diags[i] = U * (state[i] - 1/2)
         
         
 from scipy.linalg import eigh_tridiagonal, LinAlgError
@@ -334,9 +325,9 @@ cpdef double diagonalise_H(
     cdef double F = 0
     cdef int i
     for i in range(N):
-        F += - U/4*ut[i] + 1/4*t[i]*background[i] - mu_star*state[i]
+        F += - U/4*ut[i] - mu_star*state[i] + 1/4*t[i]*background[i]
         
-        H_diags[i] = 1/2 * U * ut[i] #= U * (state[i] - 1/2) This could be put in invert site inplace
+        H_diags[i] = U/2 * ut[i] - mu_star
         H_off_diags[i] = -1
     
     numpy_diag = np.asarray(<np.double_t[:N]> &H_diags[0])
@@ -346,6 +337,8 @@ cpdef double diagonalise_H(
     cdef double[:, :] vecs
 
     vals, vecs = eigh_tridiagonal(d=numpy_diag, e=numpy_offdiag, lapack_driver = 'stev')
+    
+    #add the classical energy onto all the eigenvalues so that they have the correct offset
     for i in range(N):
         vals[i] += F
     

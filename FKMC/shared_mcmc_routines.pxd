@@ -4,7 +4,7 @@ cpdef double c_classical_energy(
                                     double[::1] state,
                                     double[::1] t,
                                     double [::1] background) nogil
-cdef void invert_site_inplace(
+cpdef void invert_site_inplace(
                         long i,
                         double [::1] alternating_signs,
                         double [::1] state,

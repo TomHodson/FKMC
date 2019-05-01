@@ -55,7 +55,7 @@ cpdef double c_classical_energy(
 
     return F
 
-cdef void invert_site_inplace(
+cpdef void invert_site_inplace(
                         long i,
                         double [::1] alternating_signs,
                         double [::1] state,
