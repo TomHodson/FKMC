@@ -1,6 +1,7 @@
 from scipy.linalg import eigh_tridiagonal, LinAlgError, circulant
 import scipy
 import numpy as np
+import scipy.signal
 
 def interaction_matrix(N, alpha, J, normalise = True, dtype = np.float64, **kwargs):
     alternating_signs = 2*(np.arange(1,N) % 2) - 1
@@ -53,6 +54,13 @@ def index_histogram(bin_edges, data):
     indices = np.searchsorted(bin_edges, data)
     hist = np.bincount(indices, minlength = bin_edges.shape[0] + 1)
     return hist[1:-1], bin_edges, indices
+
 def running_mean(quantity):
     'return an array where the ith element is the mean of the first i values of the given array'
     return np.cumsum(quantity, axis = 0) / np.arange(1,quantity.shape[0]+1)
+
+def smooth(s, scale = 1):
+    x = np.linspace(-100, 100, s.shape[0])
+    kernal = scipy.stats.cauchy.pdf(x, scale = scale)
+    kernal /= np.sum(kernal)
+    return scipy.signal.convolve(s, kernal, mode = 'same')

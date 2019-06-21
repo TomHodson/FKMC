@@ -1,48 +1,9 @@
 from math import exp
 import numpy as np
-from general import interaction_matrix, solve_H, convert_to_central_moments
+from general import interaction_matrix, solve_H, convert_to_central_moments, index_histogram
 from scipy.linalg import eigh_tridiagonal, LinAlgError, circulant
 import scipy
 
-def FK_mcmc(
-    state,            
-    N_steps = 100, N_burn_in = 10,
-    mu = 0, beta = 0.1, J=1, alpha=1.5, U = 1, t=1,
-    logger = None, normalise = True, **kwargs,
-    ):
-    
-    N_sites = state.shape[0]
-    random_numbers = np.random.rand(N_steps + N_burn_in, N_sites)
-    J_matrix = interaction_matrix(N_sites, alpha=alpha, J=J, normalise = normalise, dtype = np.float64)
-    Ff, Fc, evals, evecs = solve_H(state, mu, beta, U, J_matrix, t)
-    old_F = Ff + Fc
-    if logger == None: logger = DataLogger()
-    logger.start(N_steps, N_sites)
-    accepted = 0
-    
-    for i in range(N_steps + N_burn_in):
-        for site in range(N_sites):
-            state[site] = 1 - state[site]
-            Ff, Fc, evals, evecs = solve_H(state, mu, beta, U, J_matrix, t=t)
-            dF = (Ff+Fc) - old_F
-
-            #if the move is rejected flip the site back and pretend nothing happened
-            if dF > 0 and exp(- beta * dF) < random_numbers[i, site]:
-                state[site] = 1 - state[site]
-            else:
-                old_F = Ff+Fc
-                accepted += 1
-    
-        if i >= N_burn_in:
-            Ff, Fc, evals, evecs = solve_H(state, mu, beta, U, J_matrix, t=t)
-            j = i - N_burn_in
-            logger.update(j, Ff, Fc, state, evals, evecs,  mu, beta, J_matrix)
-
-    p_acc = accepted / N_sites / (N_steps + N_burn_in)
-    if p_acc < 0.2 or p_acc > 0.5: print(f'Warning, p_acc = {p_acc}, mu = {mu}, beta = {beta}, J = {J}')
-    logger.p_acc = p_acc
-    #print(f'acceptance probability: {accepted / N_sites / (N_steps + N_burn_in)}, mu = {mu}')
-    return logger.return_vals()
 
 ### proposal functions
 def p_single_typewriter(j, N_sites, **kwargs): return [j,]
@@ -93,16 +54,17 @@ def simple_accept(state, logger, current_Ff, current_Fc, parameters):
     else:
         return False, current_Ff, current_Fc
 
-## FIXME!
-
 #implements perturbation mcmc staving off having to calculat the determinant every time
+def Ff(state, U, mu, J_matrix, **kwargs): return - U/2*np.sum(state - 1/2) - mu*np.sum(state) + (state - 1/2).T @ J_matrix @ (state - 1/2)
+def diagonalise(state, U, mu, t, **kwargs): return eigh_tridiagonal(d = U*(state - 1/2) - mu, e =-t*np.ones(state.shape[0] - 1), lapack_driver = 'stev')
 def perturbation_accept(state, logger, current_Ff, current_Fc, parameters):
-    locals().update(**parameters)
-    new_Ff = - U/2*np.sum(state - 1/2) - mu*np.sum(state) + (state - 1/2).T @ J_matrix @ (state - 1/2)
+    
+    new_Ff = Ff(state, **parameters)
     dFf = new_Ff - current_Ff
 
+    beta = parameters['beta']
     if dFf < 0 or exp(- beta * dFf) > np.random.rand():
-        evals, evecs = eigh_tridiagonal(d = U*(state - 1/2) - mu, e =-t*np.ones(state.shape[0] - 1), lapack_driver = 'stev')
+        evals, evecs = diagonalise(state, **parameters)
         new_Fc = - 1/beta * np.sum(np.log(1 + np.exp(- beta * evals)))
         dFc = new_Fc - current_Fc
         
@@ -261,3 +223,30 @@ class NfNc(object):
     def return_vals(self):
         Nf, Nc, dNf, dNc = np.mean(self.Nf), np.mean(self.Nc), scipy.stats.sem(self.Nf), scipy.stats.sem(self.Nc)
         return Nf, Nc, dNf, dNc
+    
+class Eigenspectrum_IPR(object):
+    def __init__(self, bins = 70, limit = 5):
+        self.eigenval_bins = np.linspace(-limit, limit, bins + 1)
+    
+    def start(self, N_steps, N_sites):
+        self.N_steps = N_steps
+        self.eigenvals = np.zeros((N_steps,N_sites), dtype = np.float64)
+        self.eigenval_histogram = np.zeros((N_steps,self.eigenval_bins.shape[0]-1), dtype = np.float64)
+        self.IPR_histogram = np.zeros((N_steps,self.eigenval_bins.shape[0]-1), dtype = np.float64)
+
+    def update(self, j, Ff, Fc, state, evals, evecs, mu, beta, J_matrix):
+        IPRs = ((evecs * np.conj(evecs))**2).sum(axis = 0)
+        self.eigenval_histogram[j], _, indices = index_histogram(self.eigenval_bins, evals)
+        self.IPR_histogram[j] = np.bincount(indices, weights=IPRs, minlength = self.eigenval_bins.shape[0] + 1)[1:-1]
+
+    
+    def return_vals(self):
+        E_histogram = np.mean(self.eigenval_histogram, axis = 0)
+        normalisation_factor = np.sum(E_histogram)
+        
+        E_histogram = E_histogram / normalisation_factor 
+        dE_histogram = scipy.stats.sem(self.eigenval_histogram, axis = 0) / normalisation_factor
+        
+        IPR_histogram, dIPR_histogram = np.mean(self.IPR_histogram, axis = 0), scipy.stats.sem(self.IPR_histogram, axis = 0)
+        
+        return self.eigenval_bins, E_histogram, dE_histogram, IPR_histogram, dIPR_histogram
