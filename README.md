@@ -30,6 +30,12 @@ process outline in the build.sh file
 ssh -f -N -R 8967:localhost:8967 chlorine04 #-f mean background -N means no shell
 jupyter notebook 
 ```
+### Access CMTH jupyter server from home
+```
+ssh -L -N -f 8888:localhost:8888 chlorine04
+```
+assuming chlorine04 is already setup properly in the ssh config
+
 ### Mount the RCS home directory on my own do
 
 ```
