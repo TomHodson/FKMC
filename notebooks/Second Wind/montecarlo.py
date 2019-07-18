@@ -44,7 +44,7 @@ def p_multi_site_variable_reflect_exponential(j, N_sites, scale = 1, **kwargs):
     
 
 ### Acceptance functions
-def simple_accept(state, logger, current_Ff, current_Fc, parameters):
+def simple_accept(state, sites, logger, current_Ff, current_Fc, parameters):
     new_Ff, new_Fc, evals, evecs = solve_H(state=state, **parameters)
     dF = (new_Ff + new_Fc) - (current_Ff + current_Fc)
     
@@ -57,13 +57,14 @@ def simple_accept(state, logger, current_Ff, current_Fc, parameters):
 #implements perturbation mcmc staving off having to calculat the determinant every time
 def Ff(state, U, mu, J_matrix, **kwargs): return - U/2*np.sum(state - 1/2) - mu*np.sum(state) + (state - 1/2).T @ J_matrix @ (state - 1/2)
 def diagonalise(state, U, mu, t, **kwargs): return eigh_tridiagonal(d = U*(state - 1/2) - mu, e =-t*np.ones(state.shape[0] - 1), lapack_driver = 'stev')
-def perturbation_accept(state, logger, current_Ff, current_Fc, parameters):
+def perturbation_accept(state, sites, logger, current_Ff, current_Fc, parameters):
     
     new_Ff = Ff(state, **parameters)
     dFf = new_Ff - current_Ff
 
     beta = parameters['beta']
     if dFf < 0 or exp(- beta * dFf) > np.random.rand():
+        logger.classical_accept_rates[len(sites)] += 1
         evals, evecs = diagonalise(state, **parameters)
         new_Fc = - 1/beta * np.sum(np.log(1 + np.exp(- beta * evals)))
         dFc = new_Fc - current_Fc
@@ -76,15 +77,19 @@ def perturbation_accept(state, logger, current_Ff, current_Fc, parameters):
 from collections import Counter
 def FK_mcmc_2(
     state = None, proposal = None, proposal_args = dict(), accept_function = None, parameters = dict(mu=0, beta=1, alpha=1.5, J=1, U=1, t=1, normalise = True),            
-    N_steps = 100, N_burn_in = 10, logger = None, **kwargs,
+    N_steps = 100, N_burn_in = 10, logger = None, warnings = True, info = False, **kwargs,
     ):
-    
-    N_sites = state.shape[0]
+    if type(state) == np.ndarray:
+        N_sites = state.shape[0]
+    elif 'N_sites' in parameters:
+        N_sites = parameters['N_sites']
+        state = np.arange(N_sites) % 2
+        
     parameters.update(J_matrix = interaction_matrix(N_sites, dtype = np.float64, **parameters))
     current_Ff, current_Fc, evals, evecs = solve_H(state=state, **parameters)
     if logger == None: logger = DataLogger()
     logger.start(N_steps, N_sites)
-    logger.accept_rates, logger.proposal_rates  = np.zeros(shape = (N_sites+1,2)).T
+    logger.accept_rates, logger.proposal_rates, logger.classical_accept_rates = np.zeros(shape = (N_sites+1,3)).T
 
     for i in range(N_steps + N_burn_in):
         for j in range(N_sites):
@@ -92,7 +97,7 @@ def FK_mcmc_2(
             logger.proposal_rates[len(sites)] += 1
             state[sites] = 1 - state[sites]
             
-            accepted, current_Ff, current_Fc = accept_function(state, logger, current_Ff, current_Fc, parameters)
+            accepted, current_Ff, current_Fc = accept_function(state, sites, logger, current_Ff, current_Fc, parameters)
             
             if accepted:
                 logger.accept_rates[len(sites)] += 1
@@ -109,7 +114,28 @@ def FK_mcmc_2(
     p_acc = sum(logger.accept_rates) / sum(logger.proposal_rates)
     params_sans_matrix = parameters.copy()
     params_sans_matrix.update(J_matrix = 'suppressed for brevity')
-    if p_acc < 0.2 or p_acc > 0.5: print(f"Warning, p_acc = {p_acc}, {params_sans_matrix}")
+    if warnings:
+        if p_acc < 0.2 or p_acc > 0.5: print(f"Warning, p_acc = {p_acc}, {params_sans_matrix}")
+    if info:
+        p_propose = logger.proposal_rates / sum(logger.proposal_rates)
+        p_classical_accept = logger.classical_accept_rates / sum(logger.classical_accept_rates) / p_propose
+        p_accept = logger.accept_rates / sum(logger.accept_rates) / p_propose
+        prop = ' '.join(f'{p:.0f}%' for p in 100 * p_propose)
+        c_acc = ' '.join(f'{p:.0f}%' for p in 100 * p_classical_accept)
+        acc = ' '.join(f'{p:.0f}%' for p in 100 * p_accept)
+        pert_saving = 100 * (1 - sum(logger.classical_accept_rates) / sum(logger.proposal_rates))
+        print(f"""
+        Number of burn in steps = {N_burn_in}
+        Number of MCMC steps = {N_steps}
+        Proposal function = {proposal.__name__}
+        Acceptance function = {accept_function.__name__}
+        logger = {logger}
+        parameters = {parameters}
+        Chance of proposing an N spin flip: {prop}
+        Chance of classically accepting an N spin flip: {c_acc} 
+        Chance of accepting an N spin flip: {acc}
+        Percentage of the time the matrix is not diagonalised: {pert_saving:.0f}%
+        """)
         
     #print(f'acceptance probability: {accepted / N_sites / (N_steps + N_burn_in)}, mu = {mu}')
     return logger.return_vals()
