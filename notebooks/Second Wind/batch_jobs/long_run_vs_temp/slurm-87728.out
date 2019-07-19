@@ -1,0 +1,11 @@
+------------------------------------------------------
+Job is running on node chlorine04
+------------------------------------------------------
+SLURM: scratch is /workspace/tch14/scratch/87728
+SLURM: submit is /home/tch14/FKMC/notebooks/Second Wind/batch_jobs/long_run_vs_temp/data//
+SLURM: ARRAY_JOB_ID is
+SLURM: TASK_ID is
+------------------------------------------------------
+python: can't open file 'multi_observable_temp_sweep.ipynb': [Errno 2] No such file or directory
+cp: target 'Wind/batch_jobs/long_run_vs_temp/data//' is not a directory
+Copy failed. Data retained in /workspace/tch14/scratch/87728 on chlorine04

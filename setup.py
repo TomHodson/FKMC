@@ -6,6 +6,7 @@ import os
 os.environ["CC"] = "icc"
 os.environ["LDSHARED"] = "icc -shared"
 
+
 extensions = [
     Extension("FKMC/*", ["FKMC/*.pyx"],
         include_dirs=[numpy.get_include()],
@@ -18,7 +19,7 @@ extensions = [
 
 setup(
     name="FKMC",
-    version='0.0.1',
+    version='0.2',
     description='Falikov Kimball simulations',
     author='Tom Hodson',
     author_email='tch14@iac.ac.uk',

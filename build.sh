@@ -11,7 +11,7 @@ if [ "$HOME" = "/home/tch14" ]; then
 echo -e "${GREEN}Machine recognised as CMTH${NC}"
 . /workspace/tch14/miniconda3/etc/profile.d/conda.sh
 echo -e "sourced /workspace/tch14/miniconda3/etc/profile.d/conda.sh${NC}"
-conda activate cmth_intelpython3
+conda activate cmth_intelpython3_2
 echo -e "activated cmth_intelpython3 conda environment${NC}"
 DIR="./cmth"
 
@@ -36,10 +36,15 @@ else
 echo "Machine not recognised as cx1 or cmth"
 fi
 
+###################### general stuff ########################################
+
 echo -e "${GREEN}Numpy include dirs are:${NC}"
 echo $(python -c 'import numpy; print(numpy.get_include())')
 
 echo -e "${GREEN}Starting Build${NC}"
+mkdir -p ${DIR}_build
+mkdir -p ${DIR}_dist
+
 #python setup.py build --build-base=$BUILD_DIR bdist_wheel
 #python setup.py build install
 
@@ -51,5 +56,5 @@ pip install ${DIR}_dist/$(ls -t ${DIR}_dist | head -n 1)
 
 #mv /workspace/tch14/conda-envs/cmth_intelpython3/lib/python3.6/site-packages/FKMC-0-py3.6-linux-x86_64.egg/MC /workspace/tch14/conda-envs/cmth_intelpython3/lib/python3.6/site-packages/FKMC-0-py3.6-linux-x86_64.egg/FKMC 
 
-#mv *.c $BUILD_DIR 
-#mv *.html $BUILD_DIR 
+mv FKMC/*.c ${DIR}_build
+mv FKMC/*.html ${DIR}_build

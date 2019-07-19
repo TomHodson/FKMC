@@ -1,6 +1,6 @@
 from math import exp
 import numpy as np
-from general import interaction_matrix, solve_H, convert_to_central_moments, index_histogram
+from .general import interaction_matrix, solve_H, convert_to_central_moments, index_histogram
 from scipy.linalg import eigh_tridiagonal, LinAlgError, circulant
 import scipy
 
@@ -75,7 +75,7 @@ def perturbation_accept(state, sites, logger, current_Ff, current_Fc, parameters
     return False, current_Ff, current_Fc
 
 from collections import Counter
-def FK_mcmc_2(
+def FK_mcmc(
     state = None, proposal = None, proposal_args = dict(), accept_function = None, parameters = dict(mu=0, beta=1, alpha=1.5, J=1, U=1, t=1, normalise = True),            
     N_steps = 100, N_burn_in = 10, logger = None, warnings = True, info = False, **kwargs,
     ):
@@ -140,6 +140,7 @@ def FK_mcmc_2(
     #print(f'acceptance probability: {accepted / N_sites / (N_steps + N_burn_in)}, mu = {mu}')
     return logger.return_vals()
 
+def FK_mcmc_2(*args, **kwargs): return FK_mcmc(*args, **kwargs)
 
 #a catch all datalogger
 class DataLogger(object):
@@ -171,6 +172,7 @@ class DataLogger(object):
         self.cMf_moments = (self.Mf_moments[1] - np.mean(self.Mf_moments[1]))[None, :] ** self.powers[:, None]
         return self
     #a catch all datalogger
+    
 class Observables(object):
     def __init__(self, N_cumulants = 5):
         self.N_cumulants = N_cumulants
@@ -249,6 +251,53 @@ class NfNc(object):
     def return_vals(self):
         Nf, Nc, dNf, dNc = np.mean(self.Nf), np.mean(self.Nc), scipy.stats.sem(self.Nf), scipy.stats.sem(self.Nc)
         return Nf, Nc, dNf, dNc
+
+#a catch all datalogger
+class Eigenspectrum_IPR_all(object):
+    def __init__(self, bins = 70, limit = 5, N_cumulants = 5):
+        self.N_cumulants = N_cumulants
+        self.eigenval_bins = np.linspace(-limit, limit, bins + 1)
+    
+        
+    def start(self, N_steps, N_sites):
+        self.N_sites = N_sites
+        self.N_steps = N_steps
+        self.A = 2*(np.arange(N_sites) % 2) - 1
+        self.Ff, self.Fc, self.Nf, self.Nc = np.zeros((N_steps,4), dtype = np.float64).T
+        self.state, self.eigenvals = np.zeros((2,N_steps,N_sites), dtype = np.float64)
+        self.eigenvecs = np.zeros((N_steps,N_sites,N_sites), dtype = np.float64)
+        self.powers = np.arange(self.N_cumulants)
+        self.Mf_moments = np.zeros((self.N_cumulants, N_steps), dtype = np.float64)
+        
+        self.eigenvals = np.zeros((N_steps,N_sites), dtype = np.float64)
+        self.eigenval_histogram = np.zeros((N_steps,self.eigenval_bins.shape[0]-1), dtype = np.float64)
+        self.IPR_histogram = np.zeros((N_steps,self.eigenval_bins.shape[0]-1), dtype = np.float64)
+    
+    def update(self, j, Ff, Fc, state, evals, evecs, mu, beta, J_matrix, **kwargs):
+        self.Ff[j] = Ff
+        self.Fc[j] = Fc
+        self.Nf[j] = np.sum(state) / self.N_sites
+        self.Nc[j] = np.sum(1/(1 + np.exp(beta * evals))) / self.N_sites
+        self.Mf_moments[:, j] = np.sum(2*(state - 1/2) * self.A / self.N_sites)**self.powers
+        self.state[j] = state
+        
+        IPRs = ((evecs * np.conj(evecs))**2).sum(axis = 0)
+        self.eigenval_histogram[j], _, indices = index_histogram(self.eigenval_bins, evals)
+        self.IPR_histogram[j] = np.bincount(indices, weights=IPRs, minlength = self.eigenval_bins.shape[0] + 1)[1:-1]
+
+    def return_vals(self):
+        E_histogram = np.mean(self.eigenval_histogram, axis = 0)
+        normalisation_factor = np.sum(E_histogram)
+        
+        E_histogram = E_histogram / normalisation_factor 
+        dE_histogram = scipy.stats.sem(self.eigenval_histogram, axis = 0) / normalisation_factor
+        
+        IPR_histogram, dIPR_histogram = np.mean(self.IPR_histogram, axis = 0), scipy.stats.sem(self.IPR_histogram, axis = 0)
+        
+        #self.Mf, self.dMf = np.mean(self.Mf_moments, axis = 0), scipy.stats.sem(self.Mf_moments, axis = 0)
+        self.cMf_moments = (self.Mf_moments[1] - np.mean(self.Mf_moments[1]))[None, :] ** self.powers[:, None]
+        return self
+
     
 class Eigenspectrum_IPR(object):
     def __init__(self, bins = 70, limit = 5):
@@ -256,11 +305,10 @@ class Eigenspectrum_IPR(object):
     
     def start(self, N_steps, N_sites):
         self.N_steps = N_steps
-        self.eigenvals = np.zeros((N_steps,N_sites), dtype = np.float64)
         self.eigenval_histogram = np.zeros((N_steps,self.eigenval_bins.shape[0]-1), dtype = np.float64)
         self.IPR_histogram = np.zeros((N_steps,self.eigenval_bins.shape[0]-1), dtype = np.float64)
 
-    def update(self, j, Ff, Fc, state, evals, evecs, mu, beta, J_matrix):
+    def update(self, j, Ff, Fc, state, evals, evecs, mu, beta, J_matrix, **kwargs):
         IPRs = ((evecs * np.conj(evecs))**2).sum(axis = 0)
         self.eigenval_histogram[j], _, indices = index_histogram(self.eigenval_bins, evals)
         self.IPR_histogram[j] = np.bincount(indices, weights=IPRs, minlength = self.eigenval_bins.shape[0] + 1)[1:-1]

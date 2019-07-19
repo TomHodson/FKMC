@@ -1,6 +1,6 @@
 import numpy as np
-from general import interaction_matrix, solve_H
-from general import convert_to_central_moments
+from .general import interaction_matrix, solve_H
+from .general import convert_to_central_moments
 import functools
 from itertools import product
 
