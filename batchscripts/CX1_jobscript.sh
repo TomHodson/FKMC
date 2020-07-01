@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
-#PBS -N {name}
+#PBS -N debug_array_job
 #PBS -lselect=1:ncpus=1:mem=4gb:avx=true
-#PBS -lwalltime=24:00:00
-#PBS -J 1-{N_jobs}
-#PBS -j oe
+##PBS -lwalltime=24:00:00
+#PBS -lwalltime=00:00:60
+#PBS -J 1-6
+
+##PBS -o /rds/general/user/tch14/home/HPC_data/${PBS_JOBID}/logs/%{PBS_ARRAY_INDEX}.out
+##PBS -e /rds/general/user/tch14/home/HPC_data/${PBS_JOBID}/logs/%{PBS_ARRAY_INDEX}.err
+
+#PBS -o /rds/general/user/tch14/home/HPC_data/
+#PBS -e /rds/general/user/tch14/home/HPC_data/
 
 echo ------------------------------------------------------
 echo -n 'Job is running on node '; cat $PBS_NODEFILE
@@ -24,6 +30,16 @@ module load intel-suite anaconda3/personal
 . /home/tch14/anaconda3/etc/profile.d/conda.sh
 conda activate idp
 
-cd {working_dir}
-let "JOB_ID = PBS_ARRAY_INDEX - 1"
-run_mcmc --job-id $JOB_ID --temp-dir $TMPDIR --working-dir ./
+
+let "JOB_ID = PBS_JOBID" #translate the main unchanging job id number
+let "TASK_ID = PBS_ARRAY_INDEX - 1" #translate the index into array jobs
+
+cd $TMPDIR
+
+echo "hello world!" > %{TASK_ID}.npz
+#python -u $submit/code/${target}
+
+cp $TMPDIR/%{TASK_ID}.npz /rds/general/user/tch14/home/HPC_data/${PBS_JOBID}/
+
+
+
