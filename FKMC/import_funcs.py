@@ -3,7 +3,6 @@ from time import time
 from operator import mul
 from functools import reduce
 from itertools import count
-def product(iterable): return reduce(mul, iterable, 1)
 from munch import Munch
 from itertools import zip_longest
 import logging
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 import scipy
 from FKMC.general import index_histogram_array, sort_IPRs, smooth, shapes, normalise_IPR
-from FKMC.stats import binned_error_estimate_multidim
+from FKMC.stats import binned_error_estimate_multidim, product
 
 
 #variable classifications
@@ -200,7 +199,7 @@ class mean_over_MCMC(object):
             observables.hints[self.obsname] = ('Ns',) + tuple(observables.structure_names) + ('nth moment',)
  
 
-from FKMC.general import compute_IPR_and_DOS_histograms, compute_IPR_and_DOS_histograms_1D, compute_IPR_and_DOS_histograms_ratio_then_mean
+from FKMC.general import compute_IPR_and_DOS_histograms
 
 class IPRandDOS(object):
     def __init__(self, E_bins = np.linspace(-6, 6, 2000 + 1), bootstrap_bins = 10):

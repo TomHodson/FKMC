@@ -2,6 +2,8 @@ import numpy as np
 import math
 import scipy.stats
 
+def product(iterable): return reduce(mul, iterable, 1)
+
 def binned_error_estimate(O, M):
     '''Take an array of measurements O, split it into M bins
         and return an estimate for the std dev of <O> from the 
