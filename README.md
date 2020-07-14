@@ -1,30 +1,59 @@
 
-## Things to do:
-- calculate the quantum expectation of n_c as well as n_f
-- do a plot of n vs mu to check that we're really at half filling
-- get it running on CMTH on slurm http://www.cmth.ph.ic.ac.uk/computing/software/slurm.html#slurm
-- figure out how Energy and IPR are normalised
-- fix bug in the runtime
-- investigate the asymetric energy spectra and the U/2 offset
-- finish implementing last_complete_inner_index
-- calculte the approx runtime as a function of system size and number of steps
-- add a way to print out useful information about a completed job datafile
-- change the jobs to save their state at intermediate intervals
-- add tempering
-- improve the visualisation of which jobs have produced errors, output logs and output results
-- Modify setupmcmc and gathermcmc so that the results.hdf5 file made by gather rather than by setup
-- get the dimensions working properly http://docs.h5py.org/en/stable/high/dims.html#dimension-scales
-- install a jupyter diffing tool https://github.com/jupyter/nbdime
-
-## Build:
-process outline in the build.sh file
-
-## Run a job
-- use the python setupscript 
-- remember to build
-- cd to the log dir and run qsub ../runscript
-
 ## Useful commands
+### Mosh
+I managed to compile and install mosh on the CMTH machines by compiling protobuf and mosh locally using the environment variables settings from this script: https://gist.github.com/lazywei/12bc1669dc7739dccef1
+
+Mosh doesn't support port forwarding or multi-hop ssh connections so it would mean moshing to bose and then sshing to chlorine04
+
+Since the mosh server is in ~/local/bin which isn't in my path, the command is:
+```
+mosh  --server=~/local/bin/mosh-server tch14@bose.cmth.ph.ic.ac.uk
+```
+
+Which I think would work if it wasn't for UDP ports being blocked.
+
+### TMUX
+`tmux a` attaches to current session
+`ctrl-b d` detaches from current session
+`ctrl-b w` lists windows
+`ctrl-b ,` renames the current window
+`ctrl-b c` creates a window
+
+### VNCserver
+On the server machine:
+```
+#kill all currently running servers
+vncserver -kill :* 
+#start one with default resolution, only serving on localhost, no security (because it's only serving on localhost) and on port 5902
+vncserver -xdisplaydefaults -localhost yes -SecurityTypes None -useold -httpPort 5902
+```
+On the client machine:
+
+```
+#
+ssh -Ng -L5901:127.0.0.1:5901 chlorine04
+```
+
+### autossh 
+-M tells it not to use a keepalive port and -N specifies that the config is in ~/.ssh/config
+-f starts autossh in the background
+
+in the config there are two extra options: 
+```
+host autojupyter
+        user tch14
+        hostname chlorine04
+        #RequestTTY no #potentially use this without a terminal but that never seems to work
+        proxycommand ssh -W %h:%p kirchhoff #bounce through kirchoff
+        IdentityFile ~/.ssh/id_rsa_password_protected
+        LocalForward 8888 localhost:8888 #for jupyterlab
+        LocalForward 5902 localhost:5902 #for a vncserver
+        ServerAliveInterval 30
+        ServerAliveCountMax 3
+```
+```
+autossh -M 0 -f -N autojupyter #use this to keep this connection open at all costs
+```
 ### Setup up a custom jupyter server on on CX1 do
 ```
 ssh -f -N -R 8967:localhost:8967 chlorine04 #-f mean background -N means no shell
@@ -32,7 +61,8 @@ jupyter notebook
 ```
 ### Access CMTH jupyter server from home
 ```
-ssh -L -N -f 8888:localhost:8888 chlorine04
+ssh cmthjupyer # uses the ssh config on my laptop 
+ssh -L -N -f 8888:localhost:8888 chlorine04 #direct
 ```
 assuming chlorine04 is already setup properly in the ssh config
 
@@ -44,6 +74,44 @@ sshfs tch14@login.cx1.hpc.ic.ac.uk: /workspace/tch14/cx1_home
 unmount it with:
 ```
 fusermount -u /workspace/tch14/cx1_home
+```
+
+### SSH CONFIG
+```
+host bose
+	hostname bose.cmth.ph.ic.ac.uk
+	user tch14
+	IdentityFile ~/.ssh/id_rsa_password_protected
+	ForwardX11 yes
+
+host kirchhoff
+	hostname kirchhoff.cmth.ph.ic.ac.uk
+	user tch14
+	IdentityFile ~/.ssh/id_rsa_password_protected
+	ForwardX11 yes
+
+host chlorine04
+	user tch14
+	proxycommand ssh -W %h:%p kirchhoff
+	IdentityFile ~/.ssh/id_rsa_password_protected
+	ForwardX11 yes
+
+host cx1
+	hostname login.cx1.hpc.imperial.ac.uk
+	user tch14
+	proxycommand ssh -W %h:%p kirchhoff
+	IdentityFile ~/.ssh/id_rsa_password_protected
+	ForwardX11 yes
+
+host cmthjupyter
+        user tch14
+        hostname chlorine04
+        #RequestTTY no
+        proxycommand ssh -W %h:%p kirchhoff
+        IdentityFile ~/.ssh/id_rsa_password_protected
+        LocalForward 8888 localhost:8888
+        #LocalCommand jupyter notebook --no-browser --port=8888
+
 ```
 
 ### Activate my python env on the CMTH system
@@ -72,12 +140,27 @@ jupyter lab build --name='CMTH Jupyter'
 ```
 
 ### add a jupyter kernal
+How to use one conda env in the jupyter that's running in another: https://ipython.readthedocs.io/en/stable/install/kernel_install.html#kernels-for-different-environments
+
+Alternatively, this does it automatically: https://github.com/Anaconda-Platform/nb_conda_kernels
 ```
 . env_name/bin/activate
 python -m ipykernel install --user --name env_name --display-name "Python3 (intel)"
 ```
 
 ## Notes
+### 31st July
+Moved the storage of the data from home to /data/users/tch14
+When I get around to it stefano suggested I use rsync locally to pull in the data from the workspace of each machine to my own workspace so as not to cause too much churn in the backup systems.
+
+Working on the cmth scripts now.
+
+### 30th July
+Implemented multi point FS reweighting and it seems to work.
+HAVE NOT included correlations so have essentially set tau_i = 0, need to fix that.
+It currently struggles to find a solution at low temperature, nans appear which can perhaps be fixed by offsetting the values of FS?
+Write up the 
+
 ### 17th Jan
 #### Making a conda env on the cmth machine to run local code
 
@@ -97,7 +180,7 @@ pkgs_dirs:
 Then make the intel conda environment with nodejs for jupyterlab and scipy to pull in some scientific packages
 I had to make sure CMTH_scipy package was unloaded to get the correct scipy to load
 ```
-conda create -n cmth_intelpython3 intelpython3_core python=3 nodejs scipy
+conda create -n cmth_intelpython3 intelpython3_core python=3 nodejs scipy jupyterlab click hdf5 ipykernel h5py matplotlib cython
 conda activate cmth_intelpython3
 conda install -y jupyterlab click hdf5 ipykernel h5py matplotlib cython
 jupyter lab build --name='CMTH Jupyter'

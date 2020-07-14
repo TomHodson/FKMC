@@ -9,9 +9,9 @@ NC='\033[0m' # No Color
 if [ "$HOME" = "/home/tch14" ]; then
 
 echo -e "${GREEN}Machine recognised as CMTH${NC}"
-. /workspace/tch14/miniconda3/etc/profile.d/conda.sh
-echo -e "sourced /workspace/tch14/miniconda3/etc/profile.d/conda.sh${NC}"
-conda activate cmth_intelpython3_2
+. /home/tch14/miniconda3/etc/profile.d/conda.sh
+echo -e "sourced /home/tch14/miniconda3/etc/profile.d/conda.sh${NC}"
+conda activate intelpython3.5
 echo -e "activated cmth_intelpython3 conda environment${NC}"
 DIR="./cmth"
 
