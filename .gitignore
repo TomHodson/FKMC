@@ -10,6 +10,7 @@
 *.c
 *.html
 *.
+pure_python
 
 #python environment
 

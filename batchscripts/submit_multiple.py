@@ -9,26 +9,49 @@ from jobs import CX1job, CMTHjob
 import time
 from munch import Munch
 
+def rel2home(p):
+    'if a path is relative to home, it prints it as ~/...'
+    homes = ['/rdsgpfs/general/user/tch14/home', '/rds/general/user/tch14/home']
+    for home in homes:
+        try: return '~' / p.relative_to(home)
+        except ValueError: pass
+    return p
+    
+
 ### find the python script
 debug = False
-if len(argv) > 1:
+if len(argv) == 2:
     ipynb_script = Path(argv[1]).resolve()
+    job_folder_name = None
+if len(argv) == 3:
+    ipynb_script = Path(argv[1]).resolve()
+    job_folder_name = Path(argv[2])
+    if not job_folder_name.is_absolute():
+        job_folder_name = (Path.home() / 'HPC_data' / job_folder_name)
+    
 else:
     ipynb_scripts = Path.cwd().glob('*.ipynb')
     ipynb_script = next(ipynb_scripts)
+    job_folder_name == None
 
 py_script = ipynb_script.parent / 'pure_python' / (ipynb_script.stem + '.py')
 (ipynb_script.parent / 'pure_python').mkdir(exist_ok = True)
 
 ### determine if this is CX1 or CMTH
-platform = 'CX1' if 'PBS_ENVIRONMENT' in os.environ else 'CMTH'
+platform = 'CX1' if 'CX2_SCRATCH' in os.environ else 'CMTH'
 print(f'Detected platform as {platform}')
 JobClass = CMTHjob if platform == 'CMTH' else CX1job
     
 ### Get the name of the job
-job_name = input('Give this job a name: ')
-job_folder_name = f'{job_name}_{time.time():.0f}'
+if job_folder_name == None:
+    job_name = input('Give this job a name: ')
+    job_folder_name = f'{job_name}_{time.time():.0f}'
+else:
+    job_name = job_folder_name.stem
 
+print(f'Python Script: {rel2home(ipynb_script)}') 
+print(f'Job folder will be {rel2home(job_folder_name)}')
+    
 ### Regenerate the py from the ipynb based on timestamps
 if not py_script.exists() or (ipynb_script.stat().st_mtime > py_script.stat().st_mtime):
     print('Regenerating py script from ipynb')
@@ -45,17 +68,26 @@ try:
     context = Munch(context)
 except indexError:
     print("Didn't find batch_params in script")
-   
+    
 ### extract info from batch_params
 batch_params = Munch(context.batch_params)
 
 ### make the job which gives access to some platform specific info like paths and such
-job = JobClass(py_script, job_name, job_folder_name, batch_params.indices)
+jobs = [None for _ in batch_params.chain_exts]
+for i in batch_params.chain_exts:
+    indices = (i * batch_params.total_jobs, (i+1) * batch_params.total_jobs)
+    print(f'Starting job with indices {indices}')
+    if input('Ok? (y/n):') == 'n': exit()
+    this_job_name = f"{job_name[:11]}_{i}"
+    jobs[i] = JobClass(py_script, this_job_name, job_folder_name, indices,
+                       startafter = jobs[i-1] if i > 0 else None)
+    
+    
 
 ### Make the file where the code and data will be saved
-code_dir = job.submit_dir / 'code'
-data_dir = job.submit_dir / 'data'
-logs_dir = job.submit_dir / 'logs'
+code_dir = jobs[0].submit_dir / 'code'
+data_dir = jobs[0].submit_dir / 'data'
+logs_dir = jobs[0].submit_dir / 'logs'
 for d in [code_dir, data_dir, logs_dir]: d.mkdir(parents=True, exist_ok=True)
 
 ### copy the code over
@@ -72,11 +104,14 @@ with run_desc.open('a') as f:
     print(f"\n## data/slurm_runs/{job_folder_name} {timestamp} {batch_params}", file = f)
 
 
-print(f'See logs with: cat {str(job.submit_dir)}/logs/*')
+print(f'See logs with: cat {str(jobs[0].submit_dir)}/logs/*')
 #print(f'see erring jobs with find ~/data/slurm_runs/{jobnum}/logs/ -not -empty -name "*.err" | sort')
 
-
-job.submit(held = False)
+#do this at the very end so that 
+print('Submitting jobs as held')
+for j in jobs: j.submit(held = False)
+    
+    
 
    
 

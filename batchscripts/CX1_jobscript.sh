@@ -24,8 +24,8 @@ export JOB_ID=`echo $PBS_JOBID | awk 'match($0,/[0-9]+/){print substr($0, RSTART
 export TASK_ID=$PBS_ARRAY_INDEX #translate the index into array jobs
 
 module load intel-suite anaconda3/personal
-. /home/tch14/anaconda3/etc/profile.d/conda.sh
-conda activate idp
+. ~/anaconda3/etc/profile.d/conda.sh
+conda activate base
 
 cd $TMPDIR
 python -u $SUBMIT_DIR/code/$PYTHON_SCRIPT

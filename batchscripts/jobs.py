@@ -11,17 +11,18 @@ class CX1job(object):
     jobscript = Path.home() / 'FKMC/batchscripts/CX1_jobscript.sh'
     running = False
     
-    def __init__(self, python_script, job_name, job_folder_name, array_indices): 
+    def __init__(self, python_script, job_name, job_folder_name, array_indices, startafter = None): 
         self.python_script = python_script
         self.job_name = job_name
         self.job_folder_name = job_folder_name
         self.array_indices = array_indices
         self.submit_dir = Path('/rds/general/user/tch14/home/HPC_data') / job_folder_name
+        self.startafter = startafter
       
     def submit(self, held = False):
         #http://docs.adaptivecomputing.com/torque/4-0-2/Content/topics/commands/qsub.htm
         start, stop = self.array_indices
-        indices = f'{start}-{stop}'
+        indices = f'{start}-{stop-1}'
     
         qsub_args = ['qsub', 
                      '-v', f'PYTHON_SCRIPT={self.python_script.name}, SUBMIT_DIR={self.submit_dir}',
@@ -29,18 +30,22 @@ class CX1job(object):
                      '-J', f'{indices}',
                      '-lselect=1:ncpus=1:mem=4gb:avx=true',
                      #'-lwalltime=24:00:00',
-                     '-lwalltime=00:00:60',
+                     '-lwalltime=5:00:00',
                      '-o', str(self.submit_dir / 'logs'),
                      '-e', str(self.submit_dir / 'logs'),
-                     '-h', 
-                   str(self.jobscript)]
+                    ]
+        
+        if held: qsub_args.append('-h') #hold if necessary
+        if self.startafter: qsub_args.append(f'-W depend=afterok:{self.startafter.job_id}')
+            
+        qsub_args.append(str(self.jobscript)) #the actual script itself
+        
         print('qsub command:\n', ' '.join(qsub_args))
         
         try:
             #jobid has the form 1649928[].pbs
             jobstring = sb.check_output(qsub_args, encoding = 'utf8', stderr=sb.PIPE)
             self.job_id = match(r'(\d+)\[\]\.pbs', jobstring).groups()[0]
-            if not held: self.release()
         except CalledProcessError as e:
             print(e.output, e.stderr, e.returncode)
             raise e

@@ -13,7 +13,3 @@ submit.py:
 
 Todo:
 - submit a first job script of a temperature sweep
-- modify batch_params to include an indices argument (maybe as a string for full control?) and use that in submission
-- Add the ability to depend on previous job ids
-- add a way to submit multiple jobs at the same time
-- maybe make this a separte submit script?
