@@ -103,7 +103,7 @@ def FK_mcmc(
     update_batch = (N_steps + N_burn_in) // 10
     for i in range(N_steps + N_burn_in):
         if (i%update_batch == 0):
-            print(f"{100*i/(N_steps+N_burn_in):.0f}% through after {(time() - t0)/60:.2f}m")
+            print(f"N = {N_sites}: {100*i/(N_steps+N_burn_in):.0f}% through after {(time() - t0)/60:.2f}m")
         
         for j in range(N_sites):
             sites = proposal(j, N_sites, **proposal_args)

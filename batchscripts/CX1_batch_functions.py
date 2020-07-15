@@ -11,26 +11,29 @@ class CX1job(object):
     jobscript = Path.home() / 'FKMC/batchscripts/CX1_jobscript.sh'
     running = False
     
-    def __init__(self, python_script, job_name, job_folder_name, array_indices, startafter = None): 
+    def __init__(self, python_script, job_name, job_folder_name, array_indices, startafter = None, debug = False): 
         self.python_script = python_script
         self.job_name = job_name
         self.job_folder_name = job_folder_name
         self.array_indices = array_indices
-        self.submit_dir = Path('/rds/general/user/tch14/home/HPC_data') / job_folder_name
+        self.submit_dir = Path('/home/tch14/HPC_data') / job_folder_name
         self.startafter = startafter
-      
+        self.debug = debug
     def submit(self, held = False):
         #http://docs.adaptivecomputing.com/torque/4-0-2/Content/topics/commands/qsub.htm
         start, stop = self.array_indices
         indices = f'{start}-{stop-1}'
     
         qsub_args = ['qsub', 
-                     '-v', f'PYTHON_SCRIPT={self.python_script.name}, SUBMIT_DIR={self.submit_dir}',
+                     '-v', ', '.join([
+                         f'PYTHON_SCRIPT={self.python_script.name}',
+                         f'SUBMIT_DIR={self.submit_dir}',
+                         f'DEBUG={self.debug}'
+                     ]),
                      '-N', f'{self.job_name}',
                      '-J', f'{indices}',
                      '-lselect=1:ncpus=1:mem=4gb:avx=true',
-                     #'-lwalltime=24:00:00',
-                     '-lwalltime=5:00:00',
+                     '-lwalltime=24:00:00',
                      '-o', str(self.submit_dir / 'logs'),
                      '-e', str(self.submit_dir / 'logs'),
                     ]
