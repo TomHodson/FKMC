@@ -4,6 +4,7 @@ import numpy as np
 import scipy.signal
 from itertools import count
 from scipy.linalg.lapack import dstev
+from time import time
 
 from FKMC.stats import binned_error_estimate_multidim
 
@@ -360,6 +361,26 @@ def scaling_dimension(Ns, IPR, dIPR, use_true_errors = True):
     dm, dc = np.sqrt(np.einsum('iik -> ik', cov))
     
     return m, c, dm, dc
+
+
+def tridiagonal_diagonalisation_benchmark():
+    '''
+    diagonalise a system of size 250, 100 times and report how long it took.
+    gives 1.6s on cx1
+    '''
+    t = time()
+    M = 100; N = 250
+    states = np.random.choice([0,1], size = [M, N])
+    e = -np.ones(N - 1)
+    ds = 5*(states - 1/2)
+    
+    evals = np.zeros(shape = [M,N])
+    evecs = np.zeros(shape = [M,N,N])
+    for i in range(M):
+        evals[i], evecs[i] = eigh_tridiagonal(d = ds[i], e = e, lapack_driver = 'stev')
+        
+    return time() - t
+
 
 """
 Retired code left here just in case I find a reference to it and have forgotten what it did.
