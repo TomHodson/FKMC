@@ -5,9 +5,11 @@ import shutil
 from sys import exit, argv
 from datetime import datetime
 import os
-from jobs import CX1job, CMTHjob
+from CX1_batch_functions import CX1job
+from CMTH_batch_functions import CMTHjob
 import time
 from munch import Munch
+import numpy as np
 
 ### find the python script
 debug = False
@@ -18,6 +20,10 @@ if len(argv) == 3:
     ipynb_script = Path(argv[1]).resolve()
     job_folder_name = Path(argv[2]).resolve()
     
+if len(argv) == 4:
+    ipynb_script = Path(argv[1]).resolve()
+    job_folder_name = Path(argv[2]).resolve()
+    debug = True
 else:
     ipynb_scripts = Path.cwd().glob('*.ipynb')
     ipynb_script = next(ipynb_scripts)
@@ -63,7 +69,7 @@ for i in batch_params.chain_exts:
     print(f'Starting job with indices {indices}')
     if input('Ok? (y/n):') == 'n': exit()
     jobs[i] = JobClass(py_script, job_name, job_folder_name, indices,
-                       startafter = jobs[i-1] if i > 0 else None)
+                       startafter = jobs[i-1] if i > 0 else None, debug = debug)
     
     
 
