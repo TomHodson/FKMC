@@ -17,6 +17,7 @@ class CX1job(object):
         self.job_folder_name = job_folder_name
         self.array_indices = array_indices
         self.submit_dir = Path('/rds/general/user/tch14/home/HPC_data') / job_folder_name
+        self.startafter = startafter
       
     def submit(self, held = False):
         #http://docs.adaptivecomputing.com/torque/4-0-2/Content/topics/commands/qsub.htm
@@ -35,7 +36,7 @@ class CX1job(object):
                     ]
         
         if held: qsub_args.append('-h') #hold if necessary
-        if startafter: qsub_args.append(f'-W depend=afterok:{startafter.job_id}')
+        if self.startafter: qsub_args.append(f'-W depend=afterok:{self.startafter.job_id}[].pbs')
             
         qsub_args.append(str(self.jobscript)) #the actual script itself
         
@@ -45,7 +46,6 @@ class CX1job(object):
             #jobid has the form 1649928[].pbs
             jobstring = sb.check_output(qsub_args, encoding = 'utf8', stderr=sb.PIPE)
             self.job_id = match(r'(\d+)\[\]\.pbs', jobstring).groups()[0]
-            if not held: self.release()
         except CalledProcessError as e:
             print(e.output, e.stderr, e.returncode)
             raise e
@@ -85,28 +85,3 @@ class CX1job(object):
         return output
         
         
-class CMTHjob:
-    jobid = None
-    jobscript = Path.home() / 'FKMC/batchscripts/CMTH_jobscript.sh'
-    
-    def create(python_script, job_name, array_indices):
-        start, stop = array_indices
-        indices = f'{start}-{stop}'
-        sbatch_args = ['sbatch', 
-                       '--hold', 
-                       '--parsable',
-                       f'--export=target={python_script.name}', 
-                       f'--job-name={job_name}', f'--array={indices}', 
-                       '--exclude=dirac',
-                       self.jobscript]
-
-
-        self.jobid = int(sb.check_output(sbatch_args, encoding = 'utf8'))
-    
-    def cancel():
-        if self.jobid == None: return
-        return sb.check_output(['scancel', str(self.jobid)])
-    
-    def release():
-        if self.jobid == None: return
-        sb.check_output(['scontrol', 'release', str(self.jobid)])
