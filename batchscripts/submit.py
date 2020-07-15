@@ -5,7 +5,9 @@ import shutil
 from sys import exit, argv
 from datetime import datetime
 import os
-from jobs import CX1job, CMTHjob
+from CX1_batch_functions import CX1job
+from CMTH_batch_functions import CMTHjob
+
 import time
 from munch import Munch
 

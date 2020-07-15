@@ -5,7 +5,8 @@ import shutil
 from sys import exit, argv
 from datetime import datetime
 import os
-from jobs import CX1job, CMTHjob
+from CX1_batch_functions import CX1job
+from CMTH_batch_functions import CMTHjob
 import time
 from munch import Munch
 
@@ -77,7 +78,6 @@ jobs = [None for _ in batch_params.chain_exts]
 for i in batch_params.chain_exts:
     indices = (i * batch_params.total_jobs, (i+1) * batch_params.total_jobs)
     print(f'Starting job with indices {indices}')
-    if input('Ok? (y/n):') == 'n': exit()
     this_job_name = f"{job_name[:11]}_{i}"
     jobs[i] = JobClass(py_script, this_job_name, job_folder_name, indices,
                        startafter = jobs[i-1] if i > 0 else None)
@@ -108,7 +108,9 @@ print(f'See logs with: cat {str(jobs[0].submit_dir)}/logs/*')
 #print(f'see erring jobs with find ~/data/slurm_runs/{jobnum}/logs/ -not -empty -name "*.err" | sort')
 
 #do this at the very end so that 
-print('Submitting jobs as held')
+if input('Submit the above jobs? (n to abort):') == 'n': exit()
+
+print('Submitting jobs')
 for j in jobs: j.submit(held = False)
     
     
