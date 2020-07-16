@@ -20,10 +20,8 @@ def rel2home(p):
         except ValueError: pass
     return p
    
-
 parser = argparse.ArgumentParser(description='Submit multiple jobs with dependancies chained together.')
-
-parser.add_argument('script', help='The ipynb script to use.')
+parser.add_argument('script', help='The ipynb script to use.
 parser.add_argument('-o', '--out', help='The output folder name, also used as the job name.')
 parser.add_argument('-d', '--debug', action = 'store_true', default = False, help='an integer for the accumulator')
 args = parser.parse_args()
@@ -31,9 +29,12 @@ print(args)
 sys.exit()
     
 ### find the python script
+
 debug = args['debug']
-ipynb_script = args['script']
-job_folder_name = args['out']
+ipynb_script = Path(args['script']).resolve()
+job_folder_name = Path(args['out'])
+if job_folder_name and not job_folder_name.is_absolute():
+        job_folder_name = (Path.home() / 'HPC_data' / job_folder_name)
 
 py_script = ipynb_script.parent / 'pure_python' / (ipynb_script.stem + '.py')
 (ipynb_script.parent / 'pure_python').mkdir(exist_ok = True)

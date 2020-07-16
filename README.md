@@ -132,7 +132,7 @@ jupyter lab
 less /proc/cpuinfo
 ```
 
-### To rename a jupyterlab instance, you have to rebuild it
+### To rename a jupyterlab instance and its browser tab title, you have to rebuild it
 ```
 activate the environment
 pip install npm nodejs
