@@ -11,6 +11,7 @@ import time
 from munch import Munch
 import argparse
 import sys
+from subprocess import CalledProcessError
 
 def rel2home(p):
     'if a path is relative to home, it prints it as ~/...'
@@ -21,38 +22,30 @@ def rel2home(p):
     return p
    
 parser = argparse.ArgumentParser(description='Submit multiple jobs with dependancies chained together.')
-parser.add_argument('script', help='The ipynb script to use.
-parser.add_argument('-o', '--out', help='The output folder name, also used as the job name.')
-parser.add_argument('-d', '--debug', action = 'store_true', default = False, help='an integer for the accumulator')
-args = parser.parse_args()
+parser.add_argument('script', help='The ipynb script to use.', type = Path)
+parser.add_argument('out', help='The output folder name, also used as the job name.', type = Path)
+parser.add_argument('--debug', '-d', action = 'store_true', default = False, help='an integer for the accumulator')
+args = Munch(vars(parser.parse_args()))
 print(args)
-sys.exit()
     
 ### find the python script
 
-debug = args['debug']
-ipynb_script = Path(args['script']).resolve()
-job_folder_name = Path(args['out'])
-if job_folder_name and not job_folder_name.is_absolute():
+ipynb_script = args.script.resolve()
+job_folder_name = args.out
+if not job_folder_name.is_absolute():
         job_folder_name = (Path.home() / 'HPC_data' / job_folder_name)
-
+job_name = job_folder_name.stem
+        
 py_script = ipynb_script.parent / 'pure_python' / (ipynb_script.stem + '.py')
 (ipynb_script.parent / 'pure_python').mkdir(exist_ok = True)
 
-### determine if this is CX1 or CMTH
-platform = 'CX1' if 'CX2_SCRATCH' in os.environ else 'CMTH'
-print(f'Detected platform as {platform}')
-JobClass = CMTHjob if platform == 'CMTH' else CX1job
-    
-### Get the name of the job
-if job_folder_name == None:
-    job_name = input('Give this job a name: ')
-    job_folder_name = f'{job_name}_{time.time():.0f}'
-else:
-    job_name = job_folder_name.stem
-
 print(f'Python Script: {rel2home(ipynb_script)}') 
 print(f'Job folder will be {rel2home(job_folder_name)}')
+
+### determine if this is CX1 or CMTH
+platform = 'CX1' if 'CX2_SCRATCH' in os.environ else 'CMTH'
+print(f'Platform: {platform}')
+JobClass = CMTHjob if platform == 'CMTH' else CX1job
     
 ### Regenerate the py from the ipynb based on timestamps
 if not py_script.exists() or (ipynb_script.stat().st_mtime > py_script.stat().st_mtime):
@@ -75,8 +68,8 @@ except indexError:
 batch_params = Munch(context.batch_params)
 
 ### make the job which gives access to some platform specific info like paths and such
-if debug: 
-    print('debug mode, only doing 1 chain extension')
+if args.debug: 
+    print('Debug mode: only doing 1 chain extension')
     batch_params.chain_exts = batch_params.chain_exts[:2]
                     
 jobs = [None for _ in batch_params.chain_exts]
@@ -85,7 +78,7 @@ for i in batch_params.chain_exts:
     print(f'Starting job with indices {indices}')
     this_job_name = f"{job_name[:11]}_{i}"
     jobs[i] = JobClass(py_script, this_job_name, job_folder_name, indices,
-                       startafter = jobs[i-1] if i > 0 else None, debug = debug)
+                       startafter = jobs[i-1] if i > 0 else None, debug = args.debug)
     
     
 
@@ -113,10 +106,30 @@ print(f'See logs with: cat {str(jobs[0].submit_dir)}/logs/*')
 #print(f'see erring jobs with find ~/data/slurm_runs/{jobnum}/logs/ -not -empty -name "*.err" | sort')
 
 #do this at the very end so that 
-if input('Submit the above jobs? (n to abort):') == 'n': exit()
+print('Submitting jobs but held')
+failed = False
+for j in jobs: 
+    try: j.submit(held = True)
+    except CalledProcessError as e:
+        print(f"Tried to submit job with id {j.job_id} but couldn't due to: ")
+        print(e.output, e.stderr, e.returncode)
+        failed = True
+        break
 
-print('Submitting jobs')
-for j in jobs: j.submit(held = False)
+    
+if failed or input('Release the above jobs? (n to abort):') == 'n': 
+    for j in jobs:
+        if not j == None:
+            try: j.cancel()
+            except CalledProcessError as e:
+                print(f"Tried to cancel job with id {j.job_id} but couldn't")
+                print(e.output, e.stderr, e.returncode)
+    exit()
+    
+for j in jobs: j.release()
+    
+
+
    
 
 

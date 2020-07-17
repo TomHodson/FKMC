@@ -28,7 +28,7 @@ module load intel-suite anaconda3/personal
 conda activate base
 
 cd $TMPDIR
-python -u $SUBMIT_DIR/code/$PYTHON_SCRIPT >> $SUBMIT_DIR/logs/${PBS_JOBID}.pythonlog
+python -u $SUBMIT_DIR/code/$PYTHON_SCRIPT >> $SUBMIT_DIR/logs/${JOB_ID}[${TASK_ID}].pythonlog
 
 cp $TMPDIR/${TASK_ID}.npz $SUBMIT_DIR/data/
 

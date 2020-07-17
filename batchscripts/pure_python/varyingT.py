@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[9]:
+# In[4]:
 
 
 '''
@@ -33,9 +33,9 @@ Ham_params = Munch(
 print('Ham_params: ', ' '.join(f'{k}={v},' for k,v in Ham_params.items()))
 
 ########## Variable Hamiltonian parameters ###########################################################################
-chain_exts = np.arange(5) #the number of times to extend the chain
-N_steps = int(1e4) #the number of MCMC steps in each individual task
-thin = 500
+chain_exts = np.arange(5) #the number of times to extend the chain maximum is about 50 on CX1
+N_steps = int(1e3) #the number of MCMC steps in each individual task
+thin = 10
 print(f'''
 Tasks per chain: {chain_exts.size},
 Each doing {N_steps} steps,
@@ -68,7 +68,7 @@ MCMC_params = Munch(
         logger = Eigenspectrum_IPR_all(bins = 2000, limit = 5),
         proposal = p_multi_site_uniform_reflect,
         accept_function = perturbation_accept,
-        warnings = True,
+        warnings = False,
     )
 print('MCMC_params: ', ' '.join(f'{k}={v},' for k,v in MCMC_params.items()))
 
@@ -95,12 +95,29 @@ import os
 from time import time, sleep
 import sys
 import shutil
+from FKMC.import_funcs import timefmt
 
 print('Getting environment variables')
 job_id = int(os.getenv('JOB_ID', -1))
-task_id = int(os.getenv('TASK_ID', 201))
-submit_dir = Path(os.getenv('SUBMIT_DIR', '/rds/general/user/tch14/home/HPC_data/test/'))
+debug = (os.getenv('DEBUG', job_id == -1) == 'True')
+task_id = int(os.getenv('TASK_ID', 0))
+submit_dir = Path(os.getenv('SUBMIT_DIR', '/home/tch14/HPC_data/test/'))
 print(f'job_id = {job_id}, task_id = {task_id}, submit_dir = {submit_dir}')
+
+Is_todo = np.arange(len(Ns))
+Ns_todo = Ns.copy() 
+logs = np.empty(shape = len(Ns), dtype = object)
+if not debug and (submit_dir / 'data' / f'{task_id}.npz').exists():
+    print(f'Job file {task_id}.npz already exists')
+    print(f'Loading {task_id}.npz to retrieve the work')
+    d = Munch(np.load(submit_dir / 'data' / f'{task_id}.npz', allow_pickle = True))
+    logs = d['logs'][()]
+    todo = (logs == None)
+    Is_todo = Is_todo[todo]
+    Ns_todo = Ns_todo[todo]
+    print(f'Ns_todo = {Ns_todo}')
+    
+
 
 (repeat_i, T), = list(islice(config_product, task_id, task_id + 1))
 print(f'repeat_i = {repeat_i}, T = {T}')
@@ -115,11 +132,13 @@ Ham_params.beta = 1 / T
 
 ########## Set up debugging and sleep ################################################################
 
-debug = (job_id == -1)
 if debug:
     MCMC_params.N_burn_in = 0
-    MCMC_params.N_steps = 50
+    MCMC_params.N_steps = 500
     MCMC_params.thin = 1
+    Ham_params.beta = 1 / 2.0 #choose the critical temp where the calculations take longest
+    
+    
 
 ##sleep if necessary
 if not debug: 
@@ -135,53 +154,59 @@ if previous_task_id != -1:
     print(f'Loading {previous_task_id}.npz to retrieve the last state')
     d = Munch(np.load(submit_dir / 'data' / f'{previous_task_id}.npz', allow_pickle = True))
     logs = d['logs'][()]
+    if any(log == None for log in logs):
+        print("Previous job didn't finish, exiting")
+        raise ValueError
+        
     previous_states = [logs[i].last_state for i, N in enumerate(Ns)]
 else:
     print('Generating initial state as this is the first run with these params')
     previous_states = [state_factory(N) for N in Ns]
 
+from FKMC.general import tridiagonal_diagonalisation_benchmark
+benchmark_time = tridiagonal_diagonalisation_benchmark()
+print(f"Diagonalisation benchmark: {benchmark_time:.2f} seconds")
 
 ########## The actual simulation code ################################################################
 from FKMC.montecarlo import FK_mcmc
-logs = np.empty(shape = len(Ns), dtype = object)
 
 Ham_params['J_matrix'] = '...'
 MCMC_params['state'] = '...'
+t0 = time()
 
-for i, N in enumerate(Ns):
+for i, N in zip(Is_todo, Ns_todo):
     if previous_task_id != -1: MCMC_params.N_burn_in = 0
     MCMC_params.state = previous_states[i]
 
-    print(f'starting N = {N}')
     t0 = time()
     logs[i] = FK_mcmc(**MCMC_params, parameters = Ham_params)
     logs[i].time = time() - t0
-
-########## Save the data ################################################################
-filename = f'{task_id}.npz'
-
-t = time() - t0
-print(f'{t:.0f} seconds, saving in {Path.cwd()}')
-if debug:
-    print(f'''
-    Debug steps: {MCMC_params.N_steps}
-    Requested steps: {N_steps}
-    Estimated task runtime: {t * N_steps / MCMC_params.N_steps / 60**2:.2f} 
-    ''')
-
-
-if True: 
-    np.savez_compressed(filename, 
+    
+    np.savez_compressed(f'{task_id}.npz', 
         Ns = Ns, parameters = Ham_params, MCMC_params = MCMC_params, 
         structure_names = structure_names,
         structure_dimensions = structure_dimensions,        
         logs = logs, allow_pickle = True,
         desc = ''
         )
-    print(f'Copying to {submit_dir / "data"}')
-    shutil.copy(filename, submit_dir / 'data')
     
-print('done')
+    shutil.copy(f'{task_id}.npz', submit_dir / 'data')
+
+t = time() - t0
+print(f'{t:.0f} seconds, saving in {Path.cwd()}')
+
+print(f'''
+Requested MCMC steps: {N_steps}
+Time: {timefmt(t)} 
+Estimated task runtime for 1000 steps: {timefmt(t * 1000 / MCMC_params.N_steps)} 
+''')
+print('Done')
+
+
+# In[3]:
+
+
+
 
 
 # In[ ]:

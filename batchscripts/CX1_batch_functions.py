@@ -24,7 +24,7 @@ class CX1job(object):
         start, stop = self.array_indices
         indices = f'{start}-{stop-1}'
     
-        qsub_args = ['qsub', 
+        args = ['qsub', 
                      '-v', ', '.join([
                          f'PYTHON_SCRIPT={self.python_script.name}',
                          f'SUBMIT_DIR={self.submit_dir}',
@@ -38,16 +38,16 @@ class CX1job(object):
                      '-e', str(self.submit_dir / 'logs'),
                     ]
         
-        if held: qsub_args.append('-h') #hold if necessary
-        if self.startafter: qsub_args.append(f'-W depend=afterok:{self.startafter.job_id}[].pbs')
+        if held: args.append('-h') #hold if necessary
+        if self.startafter: args.append(f'-W depend=afterok:{self.startafter.job_id}[].pbs')
             
-        qsub_args.append(str(self.jobscript)) #the actual script itself
+        args.append(str(self.jobscript)) #the actual script itself
         
-        print('qsub command:\n', ' '.join(qsub_args))
+        print('qsub command:\n', ' '.join(args))
         
         try:
             #jobid has the form 1649928[].pbs
-            jobstring = sb.check_output(qsub_args, encoding = 'utf8', stderr=sb.PIPE)
+            jobstring = sb.check_output(args, encoding = 'utf8', stderr=sb.PIPE)
             self.job_id = match(r'(\d+)\[\]\.pbs', jobstring).groups()[0]
         except CalledProcessError as e:
             print(e.output, e.stderr, e.returncode)

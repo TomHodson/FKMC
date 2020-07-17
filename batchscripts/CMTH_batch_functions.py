@@ -22,11 +22,11 @@ class CMTHjob:
     
     def submit(self, held = False):
         start, stop = self.array_indices
-        indices = f'{start}-{stop}'
-        sbatch_args = ['sbatch', 
+        indices = f'{start}-{stop-1}%20'
+        args = ['sbatch', 
                        '--hold', 
                        '--parsable',
-                      f'--export=',','.join([
+                      f'--export=' + ','.join([
                            f'PYTHON_SCRIPT={self.python_script.name}',
                            f'SUBMIT_DIR={self.submit_dir}',
                            f'DEBUG={self.debug}',
@@ -34,24 +34,27 @@ class CMTHjob:
                       f'--job-name={self.job_name}',
                       f'--array={indices}', 
                        '--exclude=dirac',
-                       '--kill-on-invalid-dep=no',
-                       '--mail-type=ALL',
-                       '--mail-user=tch14@ic.ac.uk',
-                      f'--output={self.submit_dir / "logs"}',
-                      f'--error={self.submit_dir / "logs"}',
+                       '--kill-on-invalid-dep=yes',
+                       #'--mail-type=ALL',
+                       #'--mail-user=tch14@ic.ac.uk',
+                      f'--output={self.submit_dir / "logs/%A[%a].log"}',
+                      f'--error={self.submit_dir / "logs/%A[%a].log"}',
+                       '--open-mode=append',
                       f'--time=0-24:00:00',
-                      f'--nice=10', #make the jobs defer to others
+                      f'--nice=9', #make the jobs defer to others
+                      #f'--partition=tch14', #just my machine 
+                      f'--partition=pc', #the general compute queue
                       ]
 
-        if held: sbatch_args.append('--hold') #hold if necessary
-        if self.startafter: sbatch_args.append(f'--dependency=afterok:{self.startafter.job_id}')
+        if held: args.append('--hold') #hold if necessary
+        if self.startafter: args.append(f'--dependency=afterok:{self.startafter.job_id}')
             
-        sbatch_args.append(str(self.jobscript)) #the actual script itself
-        print('sbatch command:\n', ' '.join(qsub_args))
+        args.append(str(self.jobscript)) #the actual script itself
+        print('sbatch command:\n', ' '.join(args))
         
         try:
-            #jobid has the form 1649928[].pbs
-            self.job_id = sb.check_output(sbatch_args, encoding = 'utf8', stderr=sb.PIPE)
+            #job_id has the form 1649928_[]
+            self.job_id = sb.check_output(args, encoding = 'utf8', stderr=sb.PIPE).strip()
         except CalledProcessError as e:
             print(e.output, e.stderr, e.returncode)
             raise e
@@ -59,13 +62,13 @@ class CMTHjob:
         print(f'Job created with id {self.job_id}')
         return self
     
-    def cancel():
-        if self.jobid == None: return
-        return sb.check_output(['scancel', str(self.jobid)])
+    def cancel(self):
+        if self.job_id == None: return
+        return sb.check_output(['scancel', str(self.job_id)])
     
-    def release():
-        if self.jobid == None: return
-        sb.check_output(['scontrol', 'release', str(self.jobid)])
+    def release(self):
+        if self.job_id == None: return
+        sb.check_output(['scontrol', 'release', str(self.job_id)])
         self.runnning = True
             
     def status(self):
