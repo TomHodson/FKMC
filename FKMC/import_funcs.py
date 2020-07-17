@@ -7,6 +7,9 @@ from munch import Munch
 from itertools import zip_longest
 import logging
 logger = logging.getLogger(__name__)
+import re
+from pathlib import Path
+
 
 import scipy
 from FKMC.general import index_histogram_array, sort_IPRs, smooth, shapes, normalise_IPR
@@ -248,10 +251,7 @@ class IPRandDOS(object):
             observables.hints[name] = ('Ns',) + tuple(observables.structure_names) +  ('energy index',)
 
 
-                
-import re
-from path import Path
-
+            
 def update_description(job_id, info):
     descriptions = Path("/home/tch14/FKMC/notebooks/run_descriptions.md").open().read()
     match = re.search(f"(## data/slurm_runs/{job_id} [^#]*)", descriptions, flags = re.MULTILINE + re.DOTALL)
