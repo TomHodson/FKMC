@@ -13,6 +13,10 @@ cd $TMPDIR
 export JOB_ID=$SLURM_ARRAY_JOB_ID
 export TASK_ID=$SLURM_ARRAY_TASK_ID #translate the index into array jobs
 
+echo JOB_ID = $JOB_ID
+echo CHAIN_ID = $CHAIN_ID
+echo TASK_ID = $TASK_ID
+
 . /home/tch14/miniconda3/etc/profile.d/conda.sh
 conda activate intelpython3.5
 

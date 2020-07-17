@@ -23,6 +23,10 @@ echo ------------------------------------------------------
 export JOB_ID=`echo $PBS_JOBID | awk 'match($0,/[0-9]+/){print substr($0, RSTART, RLENGTH)}'`
 export TASK_ID=$PBS_ARRAY_INDEX #translate the index into array jobs
 
+echo JOB_ID = $JOB_ID
+echo CHAIN_ID = $CHAIN_ID
+echo TASK_ID = $TASK_ID
+
 module load intel-suite anaconda3/personal
 . ~/anaconda3/etc/profile.d/conda.sh
 conda activate base

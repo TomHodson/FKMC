@@ -11,11 +11,12 @@ class CX1job(object):
     jobscript = Path.home() / 'FKMC/batchscripts/CX1_jobscript.sh'
     running = False
     
-    def __init__(self, python_script, job_name, job_folder_name, array_indices, startafter = None, debug = False): 
+    def __init__(self, python_script, job_name, job_folder_name, array_indices, chain_id, startafter = None, debug = False): 
         self.python_script = python_script
         self.job_name = job_name
         self.job_folder_name = job_folder_name
         self.array_indices = array_indices
+        self.chain_id = chain_id
         self.submit_dir = Path('/home/tch14/HPC_data') / job_folder_name
         self.startafter = startafter
         self.debug = debug
@@ -28,7 +29,8 @@ class CX1job(object):
                      '-v', ', '.join([
                          f'PYTHON_SCRIPT={self.python_script.name}',
                          f'SUBMIT_DIR={self.submit_dir}',
-                         f'DEBUG={self.debug}'
+                         f'DEBUG={self.debug}',
+                         f'CHAIN_ID={self.chain_id}',
                      ]),
                      '-N', f'{self.job_name}',
                      '-J', f'{indices}',

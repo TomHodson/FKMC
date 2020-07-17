@@ -61,7 +61,7 @@ try:
     code = '\n'.join(contents[:i+1])
     exec(code, globals(), context)
     context = Munch(context)
-except indexError:
+except IndexError:
     print("Didn't find batch_params in script")
     
 ### extract info from batch_params
@@ -74,11 +74,14 @@ if args.debug:
                     
 jobs = [None for _ in batch_params.chain_exts]
 for i in batch_params.chain_exts:
-    indices = (i * batch_params.total_jobs, (i+1) * batch_params.total_jobs)
-    print(f'Starting job with indices {indices}')
+    indices = (0, batch_params.total_jobs)
+    print(f'Starting job with indices={indices} chain={i}')
     this_job_name = f"{job_name[:11]}_{i}"
     jobs[i] = JobClass(py_script, this_job_name, job_folder_name, indices,
-                       startafter = jobs[i-1] if i > 0 else None, debug = args.debug)
+                       chain_id = i,
+                       startafter = jobs[i-1] if i > 0 else None,
+                       debug = args.debug,
+                      )
     
     
 
