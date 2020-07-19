@@ -68,18 +68,18 @@ except IndexError:
 batch_params = Munch(context.batch_params)
 
 ### make the job which gives access to some platform specific info like paths and such
-if args.debug: 
-    print('Debug mode: only doing 1 chain extension')
-    batch_params.chain_exts = batch_params.chain_exts[:2]
+#if args.debug: 
+#    print('Debug mode: only doing 1 chain extension')
+#    batch_params.chain_exts = batch_params.chain_exts[:2]
                     
 jobs = [None for _ in batch_params.chain_exts]
-for i in batch_params.chain_exts:
+for j,i in enumerate(batch_params.chain_exts):
     indices = (0, batch_params.total_jobs)
     print(f'Starting job with indices={indices} chain={i}')
     this_job_name = f"{job_name[:11]}_{i}"
-    jobs[i] = JobClass(py_script, this_job_name, job_folder_name, indices,
+    jobs[j] = JobClass(py_script, this_job_name, job_folder_name, indices,
                        chain_id = i,
-                       startafter = jobs[i-1] if i > 0 else None,
+                       startafter = jobs[j - 1] if j > 0 else None,
                        debug = args.debug,
                       )
     

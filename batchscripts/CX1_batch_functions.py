@@ -35,7 +35,7 @@ class CX1job(object):
                      '-N', f'{self.job_name}',
                      '-J', f'{indices}',
                      '-lselect=1:ncpus=1:mem=4gb:avx=true',
-                     '-lwalltime=24:00:00',
+                     '-lwalltime=24:00:00'if not self.debug else '-lwalltime=00:10:00',
                      '-o', str(self.submit_dir / 'logs'),
                      '-e', str(self.submit_dir / 'logs'),
                     ]
