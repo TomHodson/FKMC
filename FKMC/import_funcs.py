@@ -421,3 +421,138 @@ def get_data_funcmap(this_run,
     update_description(this_run.stem, infostring)
     
     return observables
+
+def get_data_funcmap_chain_ext(this_run,
+            functions = [],
+            structure_names = ('Ts',),
+            structure_dims = (),
+            ):
+    
+    '''
+    This version exposes a list of objects to each datafile and creates the output from that.
+    The structure argument has the forms of a tuple containing strings and ints which give the shape of the data,
+    strings should refer to labels in the data like Ts whose shape will be used
+    and ints create an unamed axis for things like repeats
+    '''
+    logger.warning(f'looking in {this_run}')
+    functions += [extract('time'), mean_over_MCMC('accept_rates'), mean_over_MCMC('proposal_rates')]
+    datafiles = sorted([(map(int,f.stem.split('_')), f) for f in this_run.iterdir() if f.name.endswith('npz') and not f.name == 'parameters.npz'])
+    jobs = np.array([j_id for j_id, f in datafiles])
+    if len(jobs) == 0: 
+        logger.error("NO DATA FILES FOUND");
+        return
+    logger.debug(f'job ids range from {min(jobs)} to {max(jobs)}')
+    
+    #get stuff from an an example datafile
+    d = Munch(np.load(datafiles[0][1], allow_pickle = True))
+    Ns = d['Ns']
+    parameters = d['parameters'][()]
+    MCMC_params = d['MCMC_params'][()]
+    
+    logger.debug(f'structure_dims before inference = {structure_dims}')
+    logger.debug(f'Infilling structure_dims from dimensions variables. (len(Ts) etc)')
+    #some strucure dims can be inferred from the length of things in the namespace like Ts or Ns or repeats
+    def infer(data, dimension_name, dimension_size):
+        if dimension_size != None: return dimension_size #when the dimension is just directly in structure_dims
+        if dimension_name in d and d[dimension_name].ndim == 0: return d[dimension_name].shape[0] #when the name corresponds to something like Ts or Ns
+        if dimension_name in d: return d[dimension_name] #when the struct is just directly in the config as in d[repeats] = 10
+        return None
+        
+    structure_dims = [infer(d, dimension_name, dimension_size) for dimension_size,dimension_name in zip_longest(structure_dims, structure_names, fillvalue=None)]
+    
+    #the outermost size can be determined from everything else and the number of jobs
+    if structure_dims[0] == None:
+        inner = product(structure_dims[1:])
+        structure_dims[0] = (max(jobs) + 1) // inner
+        logger.debug(f'structure_dims[0] was determined as {structure_dims[0]} = {(max(jobs) + 1)} // {inner}')
+        
+    structure_dims = tuple(structure_dims) #can't remember why I made it a tuple but will leave it for now 
+    logger.debug(f'structure_names = {structure_names}')
+    logger.debug(f'structure_dims = {structure_dims}')
+
+    #calculate the epected number of jobs
+    N_jobs = product(structure_dims)
+    logger.debug(f'Expected number of jobs {N_jobs}')
+    
+    #check if the strucure_dimensions cover enough ground
+    if max(jobs) >= N_jobs:
+        logger.warning(f"Id of largest job found ({max(jobs)}) is larger than product(structure_dims) = ({N_jobs})")
+    
+    #look for missing jobs
+    missing = set(range(N_jobs)) - set(jobs)
+    if missing: 
+        logger.warning(f'Missing jobs: {missing}\n')
+    
+    logger.info(f'Logger keys: {list(d.keys())} \n')
+    logger.info(f"MCMC_params keys: {list(MCMC_params.keys())} \n")
+    
+    original_N_steps = MCMC_params['N_steps']
+    thin = MCMC_params['thin']
+    N_steps = original_N_steps // thin
+    logger.debug(f'MCMC Steps: {original_N_steps} with thinning = {thin} for {N_steps} recorded steps')
+    
+    logger.debug(list(zip(count(), structure_names, structure_dims)))
+
+    possible_observables = [s for s in dir(d.logs[0]) if not s.startswith("_")]
+    logger.info(f'available observables = {possible_observables}')
+    
+    logger.debug(f'Allocating space for the requested observables:')
+    observables = Munch()
+    for f in functions: f.allocate(observables, example_datafile = d, N_jobs = N_jobs)
+    
+    #copy extra info over, note that structure_names might appear as a key in d, but I just overwrite it for now
+    observables.update({k : v[()] for k,v in d.items() if k != 'logs'})
+    observables.structure_names = structure_names
+    observables.structure_dims = structure_dims
+    observables['hints'] = Munch() 
+    
+    p = ProgressReporter(len(datafiles))
+    
+    file_io_time = 0
+    t = time()
+    
+    for n, (j,file) in enumerate(datafiles):
+        
+        #stop if j > product(structure_dims) assumes datafiles is ordered by j.
+        if j == N_jobs: logger.warn(f'Ignoring datafiles after {j-1}.npz because product(structure_dims) is {N_jobs}')
+        if j >= N_jobs: break
+        
+        p.update(n)
+        if n == 10 or n == 100: logger.info(f'After {n} files, {file_io_time*100/(time() - t):.1f}% of the time was file I/O')
+        #load this datafile
+        try:
+            ft = time()
+            datafile = np.load(file, allow_pickle = True)['logs']
+            file_io_time += time() - ft
+        except Exception as e:
+            logger.warning(f'{e} on {file}')
+            continue
+        
+        for f in functions: f.copy(observables, j, datafile)
+    
+    for f in functions:
+        f.reshape(structure_dims, observables)
+    
+   
+    logger.info('########################################################################\n')
+    logger.info(f'Observables has keys: {observables.keys()}')
+    
+    o = observables = Munch(observables)
+    
+    infostring = \
+    f"""
+    Completed jobs: {len(jobs)}/{N_jobs}
+    MCMC Steps: {original_N_steps} with thinning = {thin} for {N_steps} recorded steps
+    Burn in: {Munch(MCMC_params).N_burn_in}
+    Structure_names: {dict(zip(structure_names, structure_dims))}
+    Ns = {Ns}
+    Runtimes: 
+        Average: {timefmt(np.nanmean(o.time.sum(axis=0)))}
+        Min: {timefmt(np.nanmin(o.time.sum(axis=0)))}
+        Max: {timefmt(np.nanmax(o.time.sum(axis=0)))}
+        Total: {timefmt(np.nansum(o.time))}
+    """[1:]
+    logger.info(infostring)
+    update_description(this_run.stem, infostring)
+    
+    return observables
