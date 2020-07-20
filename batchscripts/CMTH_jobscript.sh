@@ -4,6 +4,9 @@ echo Job is running on node $(hostname)
 echo ------------------------------------------------------
 echo SLURM: ARRAY_JOB_ID is $SLURM_ARRAY_JOB_ID
 echo SLURM: TASK_ID is $SLURM_ARRAY_TASK_ID
+echo CPU details:
+cat /proc/cpuinfo | grep 'model name' | uniq		#display model name
+echo number of cores: `cat /proc/cpuinfo | grep processor | wc -l`		#count the number of processing units
 echo ------------------------------------------------------
 
 export TMPDIR=/workspace/$USER/scratch/$SLURM_JOB_ID
