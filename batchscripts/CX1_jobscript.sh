@@ -17,6 +17,9 @@ echo PBS: PBS_JOBID = $PBS_JOBID
 echo PBS: SUBMIT_DIR = $SUBMIT_DIR
 echo PBS: TMPDIR = $TMPDIR
 echo PBS: PYTHON_SCRIPT = $PYTHON_SCRIPT
+echo CPU details:
+cat /proc/cpuinfo | grep 'model name' | uniq		#display model name
+echo number of cores: `cat /proc/cpuinfo | grep processor | wc -l`		#count the number of processing units
 echo ------------------------------------------------------
 
 #PBS_JOBID has format 1234456[10].pbs so have to parse it out, PBS_ARRAY_INDEX is just a number
