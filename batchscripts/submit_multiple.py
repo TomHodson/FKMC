@@ -12,6 +12,7 @@ from munch import Munch
 import argparse
 import sys
 from subprocess import CalledProcessError
+import FKMC.import_funcs
 
 def rel2home(p):
     'if a path is relative to home, it prints it as ~/...'
@@ -53,16 +54,7 @@ if not py_script.exists() or (ipynb_script.stat().st_mtime > py_script.stat().st
     sb.check_output(['jupyter', 'nbconvert', '--to', 'script', ipynb_script, '--output-dir', py_script.parent]) 
 
 ### Execute the script up to a line containing 'batch_params' to get info about the job
-contents = list(py_script.open().readlines())
-for i, l in enumerate(contents):
-    if '#bath_params_end_flag' in l: break
-try:
-    context = dict()
-    code = '\n'.join(contents[:i+1])
-    exec(code, globals(), context)
-    context = Munch(context)
-except IndexError:
-    print("Didn't find batch_params in script")
+context = FKMC.import_funcs.execute_script(py_script)
     
 ### extract info from batch_params
 batch_params = Munch(context.batch_params)

@@ -422,6 +422,23 @@ def get_data_funcmap(this_run,
     
     return observables
 
+def execute_script(py_script):
+    contents = list(py_script.open().readlines())
+    flag = '#bath_params_end_flag'
+    for i, l in enumerate(contents):
+        if flag in l: break
+    try:
+        context = dict()
+        code = '\n'.join(contents[:i+1])
+        exec(code, globals(), context)
+        context = Munch(context)
+        return context
+    except IndexError:
+        print(f"Didn't find {flag} in script")
+        raise IndexError
+    
+    
+
 def get_data_funcmap_chain_ext(this_run,
             functions = [],
             structure_names = ('Ts',),
@@ -434,10 +451,28 @@ def get_data_funcmap_chain_ext(this_run,
     strings should refer to labels in the data like Ts whose shape will be used
     and ints create an unamed axis for things like repeats
     '''
+    this_run = this_run.expanduser()
     logger.warning(f'looking in {this_run}')
+    data = this_run / 'data'
+    code = this_run / 'code'
+    
+    #get the batch params from the original script
+    print(list(code.glob('*.py')))
+    py_script = next(code.glob('*.py'))
+    context = execute_script(py_script)
+    batch_params = Munch(context.batch_params)
+    structure_names = batch_params.structure_names
+    structure_dims = (d.size for d in batch_params.structure_dimensions)
+    
+    logger.debug(f'structure_names = {structure_names}')
+    logger.debug(f'structure_dims = {structure_dims}')
+    
     functions += [extract('time'), mean_over_MCMC('accept_rates'), mean_over_MCMC('proposal_rates')]
-    datafiles = sorted([(map(int,f.stem.split('_')), f) for f in this_run.iterdir() if f.name.endswith('npz') and not f.name == 'parameters.npz'])
-    jobs = np.array([j_id for j_id, f in datafiles])
+    
+    def name2id(n): return tuple(map(int,n.split('_')))
+    datafiles = sorted([(name2id(f.stem), f) for f in data.glob('*.npz')])
+    job_ids = np.array([j_id for f in datafiles])
+    
     if len(jobs) == 0: 
         logger.error("NO DATA FILES FOUND");
         return
@@ -448,27 +483,6 @@ def get_data_funcmap_chain_ext(this_run,
     Ns = d['Ns']
     parameters = d['parameters'][()]
     MCMC_params = d['MCMC_params'][()]
-    
-    logger.debug(f'structure_dims before inference = {structure_dims}')
-    logger.debug(f'Infilling structure_dims from dimensions variables. (len(Ts) etc)')
-    #some strucure dims can be inferred from the length of things in the namespace like Ts or Ns or repeats
-    def infer(data, dimension_name, dimension_size):
-        if dimension_size != None: return dimension_size #when the dimension is just directly in structure_dims
-        if dimension_name in d and d[dimension_name].ndim == 0: return d[dimension_name].shape[0] #when the name corresponds to something like Ts or Ns
-        if dimension_name in d: return d[dimension_name] #when the struct is just directly in the config as in d[repeats] = 10
-        return None
-        
-    structure_dims = [infer(d, dimension_name, dimension_size) for dimension_size,dimension_name in zip_longest(structure_dims, structure_names, fillvalue=None)]
-    
-    #the outermost size can be determined from everything else and the number of jobs
-    if structure_dims[0] == None:
-        inner = product(structure_dims[1:])
-        structure_dims[0] = (max(jobs) + 1) // inner
-        logger.debug(f'structure_dims[0] was determined as {structure_dims[0]} = {(max(jobs) + 1)} // {inner}')
-        
-    structure_dims = tuple(structure_dims) #can't remember why I made it a tuple but will leave it for now 
-    logger.debug(f'structure_names = {structure_names}')
-    logger.debug(f'structure_dims = {structure_dims}')
 
     #calculate the epected number of jobs
     N_jobs = product(structure_dims)
