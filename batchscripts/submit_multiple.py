@@ -26,6 +26,8 @@ parser = argparse.ArgumentParser(description='Submit multiple jobs with dependan
 parser.add_argument('script', help='The ipynb script to use.', type = Path)
 parser.add_argument('out', help='The output folder name, also used as the job name.', type = Path)
 parser.add_argument('--debug', '-d', action = 'store_true', default = False, help='an integer for the accumulator')
+parser.add_argument('--after', default = None, help='Make this batch of jobs depend on the job id given')
+parser.add_argument('--chain-exts', default = None, help='Overide the chain_exts given in the script')
 args = Munch(vars(parser.parse_args()))
 print(args)
     
@@ -36,9 +38,11 @@ job_folder_name = args.out
 if not job_folder_name.is_absolute():
         job_folder_name = (Path.home() / 'HPC_data' / job_folder_name)
 job_name = job_folder_name.stem
+if args.after != None: args.after = Munch(job_id = args.after)
         
 py_script = ipynb_script.parent / 'pure_python' / (ipynb_script.stem + '.py')
 (ipynb_script.parent / 'pure_python').mkdir(exist_ok = True)
+
 
 print(f'Python Script: {rel2home(ipynb_script)}') 
 print(f'Job folder will be {rel2home(job_folder_name)}')
@@ -58,6 +62,10 @@ context = FKMC.import_funcs.execute_script(py_script)
     
 ### extract info from batch_params
 batch_params = Munch(context.batch_params)
+if args.chain_exts != None:
+    batch_params.chain_exts = eval(args.chain_exts)
+    print(f'Overiding batch_params.chain_exts to {batch_params.chain_exts}')
+    
 
 ### make the job which gives access to some platform specific info like paths and such
 #if args.debug: 
@@ -71,7 +79,7 @@ for j,i in enumerate(batch_params.chain_exts):
     this_job_name = f"{job_name[:11]}_{i}"
     jobs[j] = JobClass(py_script, this_job_name, job_folder_name, indices,
                        chain_id = i,
-                       startafter = jobs[j - 1] if j > 0 else None,
+                       startafter = jobs[j - 1] if j > 0 else args.after,
                        debug = args.debug,
                       )
     
