@@ -18,8 +18,8 @@ from FKMC.stats import binned_error_estimate_multidim, product
 
 #variable classifications
 N_dependent_size = set(['IPRs', 'eigenvals', 'state','accept_rates', 'classical_accept_rates', 'last_state', 'proposal_rates'])
-per_step = set([ 'Fc', 'Ff', 'Mf_moments', 'Nc', 'Nf', 'eigenval_bins'])
-per_run = set(['A', 'N_cumulants','time'])
+per_step = set([ 'Fc', 'Ff', 'Mf_moments', 'Nc', 'Nf', ])
+per_run = set(['A', 'N_cumulants','time', 'eigenval_bins'])
 
 
 def allocate(requested_observables, example_datafile, N_jobs, MCMC_slice):
@@ -91,7 +91,7 @@ per_run = set(['A', 'N_cumulants','time'])
 def shape_hints(name):
     custom = dict(
         Mf_moments = ('moment', 'MCstep'),
-        eigenval_bins = ('bin', 'MCstep'),
+        eigenval_bins = ('bin',),
         time = (),
                  )
     if name in custom: return custom[name]
@@ -186,7 +186,7 @@ class mean_over_MCMC(object):
             data = getattr(datafile[i], self.obsname)
             if self.taking_mean:
                 observables[self.obsname][i, j] = data.mean(axis = -1)
-                observables['sigma_' + self.obsname] = scipy.stats.sem(data, axis = -1)
+                observables['sigma_' + self.obsname][i, j] = scipy.stats.sem(data, axis = -1)
             else:
                 observables[self.obsname][i, j] = data
                 
