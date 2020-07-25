@@ -793,3 +793,279 @@
         Total: 17.0 hours
     
 ## Custom run run_9_T=2
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 4.0 hours
+        Min: 24.0 minutes
+        Max: 14.0 hours
+        Total: 5.0 weeks
+    
+## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 4.0 hours
+        Min: 24.0 minutes
+        Max: 14.0 hours
+        Total: 5.0 weeks
+    
+## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 5.0 hours
+        Min: 27.0 minutes
+        Max: 16.0 hours
+        Total: 6.0 weeks
+    
+## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 2.0 hours
+        Max: 17.0 hours
+        Total: 1.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 52.0 minutes
+        Max: 1.0 days
+        Total: 10.0 weeks
+    
+## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 13.0 hours
+        Min: 4.0 hours
+        Max: 1.0 days
+        Total: 2.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 13.0 hours
+        Min: 4.0 hours
+        Max: 1.0 days
+        Total: 2.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 20.0 hours
+        Min: 6.0 hours
+        Max: 2.0 days
+        Total: 3.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 14.0 weeks
+    
+## Custom run Tsweep_U5_J5
