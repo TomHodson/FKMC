@@ -28,6 +28,9 @@
 - disorder modelling, random, perfect CDW and dirty CDW
 - plot of energy penalty vs random defect density
 
+# FKMC/notebooks/Summer 2020/July2020-1.ipynb
+- reading in the new batchscript output format
+
 Pick up from yesterday: import_funcs.py line 473
 Need to rewrite these lines to work with the new file names like 1_5.npz
 need to find later references to datafiles and jobs to fix them.
