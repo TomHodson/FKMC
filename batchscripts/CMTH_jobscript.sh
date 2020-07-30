@@ -24,9 +24,3 @@ echo TASK_ID = $TASK_ID
 conda activate intelpython3.5
 
 nice -n 19 python -u $SUBMIT_DIR/code/$PYTHON_SCRIPT >> $SUBMIT_DIR/logs/${JOB_ID}[${TASK_ID}].log
-
-if cp $TMPDIR/${TASK_ID}_${CHAIN_ID}.npz $SUBMIT_DIR/data/
-then
-echo "Copied data over, deleted scratch copy."
-rm -r $TMPDIR 
-fi
