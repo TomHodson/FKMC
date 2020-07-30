@@ -41,7 +41,7 @@ class CX1job(object):
                     ]
         
         if held: args.append('-h') #hold if necessary
-        if self.startafter: args.append(f'-W depend=afterok:{self.startafter.job_id}[].pbs')
+        if self.startafter: args.append(f'-W depend=afterany:{self.startafter.job_id}[].pbs')
             
         args.append(str(self.jobscript)) #the actual script itself
         
