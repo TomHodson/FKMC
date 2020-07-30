@@ -160,8 +160,9 @@ class extract(object):
 
 
 class mean_over_MCMC(object):
-    def __init__(self, obsname):
+    def __init__(self, obsname, N_error_bins = 10):
         self.obsname = obsname
+        self.N_error_bins = N_error_bins
     
     def allocate(self, observables, example_datafile, N_jobs):
         logs = example_datafile.logs[0]
@@ -186,7 +187,7 @@ class mean_over_MCMC(object):
             data = getattr(datafile[i], self.obsname)
             if self.taking_mean:
                 observables[self.obsname][i, j] = data.mean(axis = -1)
-                observables['sigma_' + self.obsname][i, j] = scipy.stats.sem(data, axis = -1)
+                observables['sigma_' + self.obsname][i, j] = binned_error_estimate_multidim(data, N_bins = self.N_error_bins, axis = -1)
             else:
                 observables[self.obsname][i, j] = data
                 
