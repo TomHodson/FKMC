@@ -186,6 +186,23 @@ class Eigenspectrum_IPR_all(object):
 
     def return_vals(self):
         return self
+    
+class Mf_moments(object):
+    def __init__(self, N_cumulants = 5):
+        self.N_cumulants = N_cumulants
+    
+    def start(self, N_steps, N_sites):
+        self.N_sites = N_sites
+        self.N_steps = N_steps
+        self.A = 2*(np.arange(N_sites) % 2) - 1
+        self.powers = np.arange(self.N_cumulants)
+        self.Mf_moments = np.zeros((self.N_cumulants, N_steps), dtype = np.float64)
+    
+    def update(self, j, Ff, Fc, state, evals, evecs, mu, beta, J_matrix, **kwargs):
+        self.Mf_moments[:, j] = np.sum(2*(state - 1/2) * self.A / self.N_sites)**self.powers
+
+    def return_vals(self):
+        return self
 
 '''
 class Eigenspectrum_IPR(object):
