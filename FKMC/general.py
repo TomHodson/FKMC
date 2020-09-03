@@ -288,14 +288,14 @@ def compute_IPR_and_DOS_histograms(raw_eigenvals, raw_IPRs, E_bins, bootstrap_bi
     return DOS, dDOS, IPR, dIPR
 
 
-def running_mean(quantity):
+def running_mean(quantity, axis = -1):
     'return an array where the ith element is the mean of the first i values of the given array'
-    return np.cumsum(quantity, axis = -1) / np.arange(1,quantity.shape[-1]+1)
+    return np.cumsum(quantity, axis = axis) / np.arange(1,quantity.shape[axis]+1)
 
-def running_sem(quantity):
+def running_sem(quantity, axis = -1):
     'return an array where the ith element is the standard error of the mean of the first i values of the      given array'
     std = np.sqrt(running_mean(quantity ** 2) - running_mean(quantity) ** 2)
-    sem = std / np.sqrt(np.arange(1,quantity.shape[-1]+1))
+    sem = std / np.sqrt(np.arange(1,quantity.shape[axis]+1))
     return sem
 
 def shapes(*args, **kwargs):
@@ -363,13 +363,12 @@ def scaling_dimension(Ns, IPR, dIPR, use_true_errors = True):
     return m, c, dm, dc
 
 
-def tridiagonal_diagonalisation_benchmark():
+def tridiagonal_diagonalisation_benchmark(M = 100, N = 250):
     '''
     diagonalise a system of size 250, 100 times and report how long it took.
     gives 1.6s on cx1
     '''
     t = time()
-    M = 100; N = 250
     states = np.random.choice([0,1], size = [M, N])
     e = -np.ones(N - 1)
     ds = 5*(states - 1/2)

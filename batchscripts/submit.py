@@ -2,25 +2,16 @@
 from pathlib import Path
 import subprocess as sb
 import shutil
-from sys import exit, argv
+from sys import exit
 from datetime import datetime
 import os
-from CX1_batch_functions import CX1job
-from CMTH_batch_functions import CMTHjob
 import time
 from munch import Munch
 import argparse
 import sys
 from subprocess import CalledProcessError
-import FKMC.import_funcs
 
-def rel2home(p):
-    'if a path is relative to home, it prints it as ~/...'
-    homes = ['/rdsgpfs/general/user/tch14/home', '/rds/general/user/tch14/home']
-    for home in homes:
-        try: return '~' / p.relative_to(home)
-        except ValueError: pass
-    return p
+from batch_functions import *
    
 parser = argparse.ArgumentParser(description='Submit multiple jobs with dependancies chained together.')
 parser.add_argument('script', help='The ipynb script to use.', type = Path)
@@ -58,7 +49,7 @@ if not py_script.exists() or (ipynb_script.stat().st_mtime > py_script.stat().st
     sb.check_output(['jupyter', 'nbconvert', '--to', 'script', ipynb_script, '--output-dir', py_script.parent]) 
 
 ### Execute the script up to a line containing 'batch_params' to get info about the job
-context = FKMC.import_funcs.execute_script(py_script)
+context = execute_script(py_script)
     
 ### extract info from batch_params
 batch_params = Munch(context.batch_params)

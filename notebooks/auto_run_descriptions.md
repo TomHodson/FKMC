@@ -1069,3 +1069,855 @@
         Total: 14.0 weeks
     
 ## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 10.0 hours
+        Max: 4.0 days
+        Total: 5.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 14.0 weeks
+    
+## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 10.0 hours
+        Max: 4.0 days
+        Total: 5.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 10.0 hours
+        Max: 4.0 days
+        Total: 5.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 10.0 hours
+        Max: 4.0 days
+        Total: 5.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 10.0 hours
+        Max: 4.0 days
+        Total: 5.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 10.0 hours
+        Max: 4.0 days
+        Total: 5.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 10.0 hours
+        Max: 4.0 days
+        Total: 5.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 14.0 weeks
+    
+## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [10 20 30 40 50 60]
+    Runtimes: 
+        Average: 1.0 hours
+        Min: 48.0 minutes
+        Max: 3.0 hours
+        Total: 1.0 weeks
+    
+## Custom run SmallN_Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 14.0 weeks
+    
+## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [10 20 30 40 50 60]
+    Runtimes: 
+        Average: 1.0 hours
+        Min: 48.0 minutes
+        Max: 3.0 hours
+        Total: 1.0 weeks
+    
+## Custom run SmallN_Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 5.0 hours
+        Min: 2.0 hours
+        Max: 14.0 hours
+        Total: 3.0 weeks
+    
+## Custom run Tsweep2_binder
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 15.0 hours
+        Max: 4.0 days
+        Total: 6.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 5.0 hours
+        Min: 2.0 hours
+        Max: 14.0 hours
+        Total: 3.0 weeks
+    
+## Custom run Tsweep2_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 5.0 hours
+        Min: 2.0 hours
+        Max: 14.0 hours
+        Total: 3.0 weeks
+    
+## Custom run Tsweep2_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 5.0 hours
+        Min: 2.0 hours
+        Max: 14.0 hours
+        Total: 3.0 weeks
+    
+## Custom run Tsweep2_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 5.0 hours
+        Min: 2.0 hours
+        Max: 14.0 hours
+        Total: 3.0 weeks
+    
+## Custom run Tsweep2_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 4.0 hours
+        Min: 2.0 hours
+        Max: 11.0 hours
+        Total: 4.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 4.0 hours
+        Min: 2.0 hours
+        Max: 11.0 hours
+        Total: 4.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 4.0 hours
+        Min: 2.0 hours
+        Max: 15.0 hours
+        Total: 4.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 5.0 hours
+        Min: 2.0 hours
+        Max: 18.0 hours
+        Total: 5.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 5.0 hours
+        Min: 2.0 hours
+        Max: 18.0 hours
+        Total: 5.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 13.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 15.0 hours
+        Max: 4.0 days
+        Total: 6.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 1000 with thinning = 100 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 15.0 weeks
+    
+## Custom run Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 200}
+    Ns = [10 20 30 40 50 60]
+    Runtimes: 
+        Average: 1.0 hours
+        Min: 52.0 minutes
+        Max: 3.0 hours
+        Total: 2.0 weeks
+    
+## Custom run SmallN_Tsweep_U5_J5
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 13.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 13.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 13.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 14.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 13.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 14.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 10000 with thinning = 100 for 100 recorded steps
+    Burn in: 10000
+    Structure_names: {'Ts': 4}
+    Ns = [ 70  80  90 110 130 150 180 210 250 300]
+    Runtimes: 
+        Average: 1.0 days
+        Min: 15.0 hours
+        Max: 4.0 days
+        Total: 6.0 days
+    
+## Custom run IPR_DOR_U5_J5_above_below_Tc
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 1 for 5000 recorded steps
+    Burn in: 0
+    Structure_names: {'Ts': 100}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 12.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 7.0 weeks
+    
+## Custom run Tsweep2_fullrange
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 14.0 weeks
+    
+## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: nan weeks
+        Min: nan weeks
+        Max: nan weeks
+        Total: 0 seconds
+    
+## Custom run Tsweep3_full
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 47.0 minutes
+        Min: 38.0 minutes
+        Max: 1.0 hours
+        Total: 1.0 days
+    
+## Custom run Tsweep3_full
+    Completed jobs:?
+    MCMC Steps: 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 4.0 hours
+        Min: 31.0 minutes
+        Max: 15.0 hours
+        Total: 6.0 weeks
+    
+## Custom run Tsweep3_full
+    Completed jobs: 9/9
+    MCMC Steps: 100 with thinning = 10 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 9}
+    Ns = [1000]
+    Runtimes: 
+        Average: 51 seconds
+        Min: 38 seconds
+        Max: 1.0 minutes
+        Total: 7.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 9/9
+    MCMC Steps: 100 with thinning = 10 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 9}
+    Ns = [1000]
+    Runtimes: 
+        Average: 51 seconds
+        Min: 38 seconds
+        Max: 1.0 minutes
+        Total: 7.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 10/10
+    MCMC Steps: 100 with thinning = 10 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 10}
+    Ns = [1000]
+    Runtimes: 
+        Average: 54 seconds
+        Min: 38 seconds
+        Max: 1.0 minutes
+        Total: 9.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 11/8
+    MCMC Steps: 100 with thinning = 10 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 8}
+    Ns = [1000]
+    Runtimes: 
+        Average: 49 seconds
+        Min: 38 seconds
+        Max: 1.0 minutes
+        Total: 6.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 11/8
+    MCMC Steps: 100 with thinning = 10 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 8}
+    Ns = [1000]
+    Runtimes: 
+        Average: 49 seconds
+        Min: 38 seconds
+        Max: 1.0 minutes
+        Total: 6.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 13/8
+    MCMC Steps: 100 with thinning = 10 for 10 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 8}
+    Ns = [1000]
+    Runtimes: 
+        Average: 49 seconds
+        Min: 38 seconds
+        Max: 1.0 minutes
+        Total: 6.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 1/1
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 1}
+    Ns = [1000 1000 1000 1000]
+    Runtimes: 
+        Average: nan weeks
+        Min: nan weeks
+        Max: nan weeks
+        Total: 2.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 1/1
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 1}
+    Ns = [1000 1000 1000 1000]
+    Runtimes: 
+        Average: nan weeks
+        Min: nan weeks
+        Max: nan weeks
+        Total: 3.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 2/2
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 2}
+    Ns = [1000 1000 1000 1000]
+    Runtimes: 
+        Average: 4.0 minutes
+        Min: 4.0 minutes
+        Max: 4.0 minutes
+        Total: 9.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 3/3
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 3}
+    Ns = [1000 1000 1000 1000]
+    Runtimes: 
+        Average: 4.0 minutes
+        Min: 4.0 minutes
+        Max: 4.0 minutes
+        Total: 14.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 4/4
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 4}
+    Ns = [1000 1000 1000 1000]
+    Runtimes: 
+        Average: 4.0 minutes
+        Min: 4.0 minutes
+        Max: 5.0 minutes
+        Total: 19.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 4/4
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 4}
+    Ns = [1000 1000 1000 1000]
+    Runtimes: 
+        Average: 4.0 minutes
+        Min: 4.0 minutes
+        Max: 5.0 minutes
+        Total: 19.0 minutes
+    
+## Custom run large_test
+    Completed jobs: 6/6
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 0
+    Structure_names: {'repeats': 6}
+    Ns = [1000 1000 1000 1000]
+    Runtimes: 
+        Average: 4.0 minutes
+        Min: 4.0 minutes
+        Max: 5.0 minutes
+        Total: 29.0 minutes
+    
+## Custom run large_test
+    Completed jobs:?
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 100
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 4.0 minutes
+        Min: 3.0 minutes
+        Max: 5.0 minutes
+        Total: 1.0 hours
+    
+## Custom run large_test
+    Completed jobs:?
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 100
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 4.0 minutes
+        Min: 3.0 minutes
+        Max: 5.0 minutes
+        Total: 1.0 hours
+    
+## Custom run large_test
+    Completed jobs:?
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 100
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 4.0 minutes
+        Min: 3.0 minutes
+        Max: 14.0 minutes
+        Total: 1.0 hours
+    
+## Custom run large_test
+    Completed jobs:?
+    MCMC Steps: 100 with thinning = 1 for 100 recorded steps
+    Burn in: 100
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 7.0 minutes
+        Min: 3.0 minutes
+        Max: 23.0 minutes
+        Total: 3.0 hours
+    
+## Custom run large_test
+    Completed jobs:?
+    MCMC Steps: 50 with thinning = 1 for 50 recorded steps
+    Burn in: 50
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: nan weeks
+        Min: nan weeks
+        Max: nan weeks
+        Total: 0 seconds
+    
+## Custom run Large_IPR_DOS_test
+    Completed jobs:?
+    MCMC Steps: 50 with thinning = 1 for 50 recorded steps
+    Burn in: 50
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 14.0 minutes
+        Min: 12.0 minutes
+        Max: 16.0 minutes
+        Total: 4.0 hours
+    
+## Custom run Large_IPR_DOS_test
+    Completed jobs:?
+    MCMC Steps: 50 with thinning = 1 for 50 recorded steps
+    Burn in: 50
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 14.0 minutes
+        Min: 12.0 minutes
+        Max: 16.0 minutes
+        Total: 4.0 hours
+    
+## Custom run Large_IPR_DOS_test
+    Completed jobs:?
+    MCMC Steps: 50 with thinning = 1 for 50 recorded steps
+    Burn in: 50
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 25.0 minutes
+        Min: 12.0 minutes
+        Max: 1.0 hours
+        Total: 9.0 hours
+    
+## Custom run Large_IPR_DOS_test
+    Completed jobs:?
+    MCMC Steps: 50 with thinning = 1 for 50 recorded steps
+    Burn in: 50
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 32.0 minutes
+        Min: 12.0 minutes
+        Max: 3.0 hours
+        Total: 13.0 hours
+    
+## Custom run Large_IPR_DOS_test
+    Completed jobs:?
+    MCMC Steps: 50 with thinning = 1 for 50 recorded steps
+    Burn in: 50
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 1.0 hours
+        Min: 12.0 minutes
+        Max: 11.0 hours
+        Total: 1.0 days
+    
+## Custom run Large_IPR_DOS_test
+    Completed jobs:?
+    MCMC Steps: 50 with thinning = 1 for 50 recorded steps
+    Burn in: 50
+    Structure_names: {'States': 4, 'Rs': 5, 'Ts': 2}
+    Ns = [  70   90  120  160  220  300  410  550  740 1000]
+    Runtimes: 
+        Average: 1.0 hours
+        Min: 12.0 minutes
+        Max: 11.0 hours
+        Total: 1.0 days
+    
+## Custom run Large_IPR_DOS_test
