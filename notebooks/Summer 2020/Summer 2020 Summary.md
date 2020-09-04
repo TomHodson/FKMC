@@ -32,29 +32,48 @@
 - reading in the new batchscript output format
 
 # FKMC/notebooks/Summer 2020/August2020-1.ipynb
+- an attempt to implement correlated noise generation by generating correlated probabilities, doesn't work so far.
 
 
 # Figures for the short paper
+data_location: ~/HPC_data/pickled_data
+figure_location: ~/git/FK_short_paper/figs on my mac which sync with overleaf through git
 
 ## Fig 1
+Figure name: phase_diagram2.eps
 
-### M squared plot vs T
+### Top left: M squared plot vs T
     Created in: ?
+    Data saved in: binder_data.pickle
     N steps = ?
 
-### Binder plot vs T
+### Top right: Binder plot
     Created in: ?
+    Data saved in: binder_data.pickle
     N steps = ?
 
-### M squared vs T and U
+### Bottom left: TU phase diagram
     Created in: ?
-    N steps = ?
+    Data saved in: TU_phase_data.pickle
 
-### M squared vs T and J
+    Simulation Parameters
+    N_sites : 128, t : 1, alpha : 1.5, mu : 0, beta : 10.0, J : 5, U : 0.0, normalise : True
+    MCMC Parameters
+    state : None, N_steps : 100000, N_burn_in : 10000, thin : 100, logger : <FKMC.montecarlo.Eigenspectrum_IPR_all object at 0x7ff73d536750>, proposal : <function         p_multi_site_uniform_reflect at 0x7ff7609ccb00>, accept_function : <function perturbation_accept at 0x7ff7609cce60>, warnings : True
+
+### Bottom right: TJ phase diagram
     Created in: ?
-    N steps = ?
+    Data saved in: TJ_phase_data.pickle
+    Simulation Parameters
+    N_sites : 128, t : 1, alpha : 1.25, mu : 0, beta : 10.0, J : 0.0, U : 1, normalise : True
+    MCMC Parameters
+    state : None, N_steps : 100000, N_burn_in : 10000, thin : 100, logger : <FKMC.montecarlo.Eigenspectrum_IPR_all object at 0x7ff74ce7f7d0>, proposal : <function     
+    p_multi_site_uniform_reflect at 0x7ff7609ccb00>, accept_function : <function perturbation_accept at 0x7ff7609cce60>, warnings : True
     
 ## Fig 2
+Figure name: band_opening.eps
+Data in: Long_range_IPR_and_DOS.pickle
+
 ### DOS vs T
 ### IPR vs T
 
