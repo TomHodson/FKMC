@@ -1,0 +1,14 @@
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: linux-64
+python=3.8
+numpy
+scipy
+matplotlib
+munch
+
+#jupyterlab and addons
+jupyterlab
+jupyterlab-git
+nodejs
+nb_conda_kernels #makes conda environments appear as jupyter kernals

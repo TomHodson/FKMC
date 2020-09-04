@@ -7,7 +7,7 @@ from time import time
 
 
 ### proposal functions #######################################################################################################################################################
-def p_single_typewriter(j, N_sites, **kwargs): return [j,]
+def p_single_typewriter(j, N_sites, **kwargs): return [j%N_sites,]
 def p_single_random_site(j, N_sites, **kwargs): return [np.random.randint(N_sites),]
 def p_multi_site_fixed(multi, **kwargs): return lambda k, N_sites:  np.random.randint(N_sites, size = multi)
 def p_multi_site_uniform(j, N_sites, **kwargs): return np.random.randint(N_sites, size = np.random.randint(1,N_sites))
@@ -58,6 +58,7 @@ def simple_accept(state, sites, logger, current_Ff, current_Fc, parameters):
 #implements perturbation mcmc staving off having to calculat the determinant every time
 def Ff(state, U, mu, J_matrix, **kwargs): return - U/2*np.sum(state - 1/2) - mu*np.sum(state) + (state - 1/2).T @ J_matrix @ (state - 1/2)
 def diagonalise(state, U, mu, t, **kwargs): return eigh_tridiagonal(d = U*(state - 1/2) - mu, e =-t*np.ones(state.shape[0] - 1), lapack_driver = 'stev')
+
 def perturbation_accept(state, sites, logger, current_Ff, current_Fc, parameters):
     
     new_Ff = Ff(state, **parameters)
@@ -103,9 +104,15 @@ def FK_mcmc(
     update_batch = (N_steps + N_burn_in) // 10
     for i in range(N_steps + N_burn_in):
         if (i%update_batch == 0):
-            print(f"N = {N_sites}: {100*i/(N_steps+N_burn_in):.0f}% through after {(time() - t0)/60:.2f}m")
+            c_r = 1 - (np.sum(logger.classical_accept_rates) / np.sum(logger.proposal_rates))
+            q_r = 1 - np.sum(logger.accept_rates) / np.sum(logger.classical_accept_rates)
+            o_r = 1 - np.sum(logger.accept_rates) / np.sum(logger.proposal_rates)
+            print(f"N = {N_sites}: {100*i/(N_steps+N_burn_in):.0f}% through after {(time() - t0)/60:.2f}m \
+            rejects: classical = {c_r*100:.0f}% quantum = {q_r*100:.0f}% overall = {o_r*100:.0f}%")
         
-        for j in range(N_sites):
+        #I realised late that all the autocorrelation times seem to scale with N_sites**2, so I divide by 100
+        #so that jobs of size 100 will do the number of iterations as before
+        for j in range(max(1, N_sites*N_sites // 100)): 
             sites = proposal(j, N_sites, **proposal_args)
             logger.proposal_rates[len(sites)] += 1
             state[sites] = 1 - state[sites]

@@ -30,6 +30,7 @@
 
 # FKMC/notebooks/Summer 2020/July2020-1.ipynb
 - reading in the new batchscript output format
+- start preparing final figures
 
 # FKMC/notebooks/Summer 2020/August2020-1.ipynb
 - an attempt to implement correlated noise generation by generating correlated probabilities, doesn't work so far.
@@ -76,7 +77,5 @@ Data in: Long_range_IPR_and_DOS.pickle
 
 ### DOS vs T
 ### IPR vs T
-
-
 
 

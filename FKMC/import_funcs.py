@@ -123,7 +123,7 @@ class ProgressReporter(object):
     def update(self, j):
         N = self.N
         if j == 0: self.t0 = time()
-        if (j == 10) or (j == N//2): 
+        if (j == 10) or (j == N//2) and (j != 0): 
             dt = time() - self.t0
             logger.info(f'\nTook {dt:.2f}s to do the first {j}, should take {(N-j)*dt/j:.2f}s to do the remaining {N-j}\n')
         if j % self.dot_batch == 0: print(f'{j} ', end='')
@@ -155,12 +155,15 @@ class extract(object):
     def reshape(self, structure_dims, observables):
         o = observables[self.obsname]
         observables[self.obsname] = o.reshape(o.shape[0:1] + structure_dims + o.shape[2:])
-        observables.hints[self.obsname] = ('Ns',) + tuple(observables.structure_names)
+
+        observables.hints[self.obsname] = ('Ns',) + tuple(observables.structure_names) + ('MCMC_step',)
+        if self.obsname == 'Mf_moments':
+            observables.hints[self.obsname] = ('Ns',) + tuple(observables.structure_names) + ('nth moment', 'MCMC_step')
  
 
 
 class mean_over_MCMC(object):
-    def __init__(self, obsname, N_error_bins = 10):
+    def __init__(self, obsname, N_error_bins = 1):
         self.obsname = obsname
         self.N_error_bins = N_error_bins
     
@@ -187,6 +190,7 @@ class mean_over_MCMC(object):
             data = getattr(datafile[i], self.obsname)
             if self.taking_mean:
                 observables[self.obsname][i, j] = data.mean(axis = -1)
+                #print(i, self.obsname, data.shape, self.N_error_bins)
                 observables['sigma_' + self.obsname][i, j] = binned_error_estimate_multidim(data, N_bins = self.N_error_bins, axis = -1)
             else:
                 observables[self.obsname][i, j] = data
