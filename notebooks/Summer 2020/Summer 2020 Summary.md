@@ -28,11 +28,21 @@
 - disorder modelling, random, perfect CDW and dirty CDW
 - plot of energy penalty vs random defect density
 
-Pick up from yesterday: import_funcs.py line 473
-Need to rewrite these lines to work with the new file names like 1_5.npz
-need to find later references to datafiles and jobs to fix them.
+# FKMC/notebooks/Summer 2020/July2020-1.ipynb
+- reading in the new batchscript output format
+- start preparing final figures
 
-Check on how the jobs ran overnight.
+# List of plots and the number of runs for each:
+## Full range Mf_moments
+folder:
 
-Then load in the Tsweep data.
-then work on the short paper
+## Binder Mf_moments
+folder:
+
+## Gap opening
+folder:
+
+## TJ phase diagram
+
+## TU phase diagram
+

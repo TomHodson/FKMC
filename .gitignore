@@ -1,3 +1,4 @@
+*run_descriptions.md
 *.npz
 *.tex
 *.png
@@ -5,7 +6,7 @@
 
 #hidden files
 .*
-batchscripts/pure_python
+batchscripts/pure_python/
 
 #cython generated files
 *.c

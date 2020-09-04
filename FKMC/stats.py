@@ -1,7 +1,8 @@
 import numpy as np
 import math
 import scipy.stats
-
+from operator import mul
+from functools import reduce
 def product(iterable): return reduce(mul, iterable, 1)
 
 def binned_error_estimate(O, M):
