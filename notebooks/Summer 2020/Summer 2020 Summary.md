@@ -31,11 +31,33 @@
 # FKMC/notebooks/Summer 2020/July2020-1.ipynb
 - reading in the new batchscript output format
 
-Pick up from yesterday: import_funcs.py line 473
-Need to rewrite these lines to work with the new file names like 1_5.npz
-need to find later references to datafiles and jobs to fix them.
+# FKMC/notebooks/Summer 2020/August2020-1.ipynb
 
-Check on how the jobs ran overnight.
 
-Then load in the Tsweep data.
-then work on the short paper
+# Figures for the short paper
+
+## Fig 1
+
+### M squared plot vs T
+    Created in: ?
+    N steps = ?
+
+### Binder plot vs T
+    Created in: ?
+    N steps = ?
+
+### M squared vs T and U
+    Created in: ?
+    N steps = ?
+
+### M squared vs T and J
+    Created in: ?
+    N steps = ?
+    
+## Fig 2
+### DOS vs T
+### IPR vs T
+
+
+
+
