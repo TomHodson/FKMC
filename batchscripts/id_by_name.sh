@@ -1,0 +1,1 @@
+qstat | grep Large | cut -c -9 | tr '\n' ' '
