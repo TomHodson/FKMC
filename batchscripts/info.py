@@ -11,6 +11,7 @@ print('Imports done')
 parser = argparse.ArgumentParser(description='Get info about a job given its submission directory')
 parser.add_argument('out', help='The output folder name', type = Path)
 parser.add_argument('--files', action = 'store_true', default = False, help='Show the datafiles that have been generated.')
+parser.add_argument('--logs', action = 'store_true', default = False, help='Show the logs that have been generated.')
 args = Munch(vars(parser.parse_args()))
 
 ### find the python script
@@ -85,7 +86,7 @@ if args.files:
         print(f'{task_id:4}: ' + ''.join(line) + '|')
         
 if args.logs:
-    
+    pass
     
     
     
