@@ -9,6 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 import re
 from pathlib import Path
+import multiprocessing as mp
 
 
 import scipy
@@ -442,19 +443,40 @@ def execute_script(py_script):
         print(f"Didn't find {flag} in script")
         raise IndexError
     
+
+from collections import defaultdict
+
+
+def datafile_load(filename):
+    return np.load(filename, allow_pickle = True)['logs']
+
+def datafile_concat(datafiles, Ns):
+    #datafiles is a list of lists where the outer is chain_ext and inner is Ns
+    datafile = [Munch() for _ in Ns]
+    names = ['IPRs', 'eigenvals', 'Mf_moments', 'eigenval_bins', 'time', 'accept_rates', 'proposal_rates']
     
+    for name in names:
+        if not hasattr(datafiles[0][0], name): continue
+        shape = shape_hints(name)
+        if 'MCstep' in shape:
+            axis = shape.index('MCstep')
+        for i, N in enumerate(Ns):
+            if name == 'time':
+                datafile[i][name] = np.sum([getattr(log[i], name) for log in datafiles])
+            elif name == 'eigenval_bins':
+                log = datafiles[0]
+                datafile[i][name] = getattr(log[i], name)
+            else:
+                datafile[i][name] = np.concatenate([getattr(log[i], name) for log in datafiles], axis = axis)
+    return datafile
 
 def get_data_funcmap_chain_ext(this_run,
             functions = [],
-            structure_names = ('Ts',),
-            structure_dims = (),
+            strict_chain_length = True,
+            chain_length = None,
             ):
     
     '''
-    This version exposes a list of objects to each datafile and creates the output from that.
-    The structure argument has the forms of a tuple containing strings and ints which give the shape of the data,
-    strings should refer to labels in the data like Ts whose shape will be used
-    and ints create an unamed axis for things like repeats
     '''
     this_run = this_run.expanduser()
     logger.warning(f'looking in {this_run}')
@@ -467,40 +489,47 @@ def get_data_funcmap_chain_ext(this_run,
     context = execute_script(py_script)
     batch_params = Munch(context.batch_params)
     structure_names = batch_params.structure_names
-    structure_dims = (d.size for d in batch_params.structure_dimensions)
+    structure_dims = tuple(d.size for d in batch_params.structure_dimensions)
     
     logger.debug(f'structure_names = {structure_names}')
     logger.debug(f'structure_dims = {structure_dims}')
     
-    functions += [extract('time'), mean_over_MCMC('accept_rates'), mean_over_MCMC('proposal_rates')]
-    
+    #calculate the epected number of jobs
     def name2id(n): return tuple(map(int,n.split('_')))
-    datafiles = sorted([(name2id(f.stem), f) for f in data.glob('*.npz')])
-    job_ids = np.array([j_id for f in datafiles])
     
-    if len(jobs) == 0: 
+    datafiles = dict()
+    task_ids = set()
+    chain_ids = defaultdict(set)
+    for f in data.glob('*.npz'):
+        task_id, chain_id = name2id(f.stem)
+        datafiles[(task_id, chain_id)] = f
+        task_ids.add(task_id)
+        chain_ids[task_id].add(chain_id)
+    
+    
+    N_tasks = product(structure_dims)
+    
+    N_chains = min(max(c) for c in chain_ids.values()) + 1
+    
+    logger.debug(f'Expected number of tasks {N_tasks}')
+    logger.debug(f'Measured number of tasks {len(task_ids)}')
+    logger.debug(f'Expected number of chains {chain_length}')
+    logger.debug(f'Measured number of chains {N_chains}')
+    if chain_length is not None: N_chains = chain_length
+    
+    functions += [extract('time'), 
+                  mean_over_MCMC('accept_rates', N_error_bins = 1),
+                  mean_over_MCMC('proposal_rates', N_error_bins = 1)]
+    
+    if len(datafiles) == 0: 
         logger.error("NO DATA FILES FOUND");
         return
-    logger.debug(f'job ids range from {min(jobs)} to {max(jobs)}')
     
     #get stuff from an an example datafile
-    d = Munch(np.load(datafiles[0][1], allow_pickle = True))
+    d = Munch(np.load(next(iter(datafiles.values())), allow_pickle = True))
     Ns = d['Ns']
     parameters = d['parameters'][()]
     MCMC_params = d['MCMC_params'][()]
-
-    #calculate the epected number of jobs
-    N_jobs = product(structure_dims)
-    logger.debug(f'Expected number of jobs {N_jobs}')
-    
-    #check if the strucure_dimensions cover enough ground
-    if max(jobs) >= N_jobs:
-        logger.warning(f"Id of largest job found ({max(jobs)}) is larger than product(structure_dims) = ({N_jobs})")
-    
-    #look for missing jobs
-    missing = set(range(N_jobs)) - set(jobs)
-    if missing: 
-        logger.warning(f'Missing jobs: {missing}\n')
     
     logger.info(f'Logger keys: {list(d.keys())} \n')
     logger.info(f"MCMC_params keys: {list(MCMC_params.keys())} \n")
@@ -508,7 +537,8 @@ def get_data_funcmap_chain_ext(this_run,
     original_N_steps = MCMC_params['N_steps']
     thin = MCMC_params['thin']
     N_steps = original_N_steps // thin
-    logger.debug(f'MCMC Steps: {original_N_steps} with thinning = {thin} for {N_steps} recorded steps')
+    
+    logger.info(f'Overall steps = {N_steps * N_chains}')
     
     logger.debug(list(zip(count(), structure_names, structure_dims)))
 
@@ -517,37 +547,48 @@ def get_data_funcmap_chain_ext(this_run,
     
     logger.debug(f'Allocating space for the requested observables:')
     observables = Munch()
-    for f in functions: f.allocate(observables, example_datafile = d, N_jobs = N_jobs)
+    for f in functions: f.allocate(observables, example_datafile = d, N_jobs = N_tasks)
     
     #copy extra info over, note that structure_names might appear as a key in d, but I just overwrite it for now
     observables.update({k : v[()] for k,v in d.items() if k != 'logs'})
     observables.structure_names = structure_names
     observables.structure_dims = structure_dims
+    observables.batch_params = batch_params
     observables['hints'] = Munch() 
     
-    p = ProgressReporter(len(datafiles))
+    for name, dim in zip(structure_names, batch_params.structure_dimensions):
+        observables[name] = dim
     
-    file_io_time = 0
-    t = time()
-    
-    for n, (j,file) in enumerate(datafiles):
-        
-        #stop if j > product(structure_dims) assumes datafiles is ordered by j.
-        if j == N_jobs: logger.warn(f'Ignoring datafiles after {j-1}.npz because product(structure_dims) is {N_jobs}')
-        if j >= N_jobs: break
-        
-        p.update(n)
-        if n == 10 or n == 100: logger.info(f'After {n} files, {file_io_time*100/(time() - t):.1f}% of the time was file I/O')
-        #load this datafile
-        try:
-            ft = time()
-            datafile = np.load(file, allow_pickle = True)['logs']
-            file_io_time += time() - ft
-        except Exception as e:
-            logger.warning(f'{e} on {file}')
-            continue
-        
-        for f in functions: f.copy(observables, j, datafile)
+    with mp.Pool(18) as p:
+        for task_id in range(N_tasks):
+            print(task_id, end = ' ')
+
+            filename_list = [data / f'{task_id}_{chain_id}.npz' for chain_id in  range(N_chains)]
+            
+            def check_exists(f):
+                if not f.exists(): 
+                    raise ValueError(f'{f} is expected but missing!')
+            map(check_exists, filename_list)
+
+            datafile_list = list(p.map(datafile_load, filename_list))
+
+            #datafile_list = list(map(datafile_load, filename_list))
+            
+            #check that the final N is present in all the datafiles
+            finished = [d[-1] is not None for d in datafile_list]
+            if not all(finished):
+                print(f'not all of {task_id} is not finished')
+                print(finished)
+                continue
+            
+            #for d in datafile_list: print(d[-1].accept_rates.shape)
+            datafile = datafile_concat(datafile_list, Ns)
+            
+
+            #convert all those datafiles to one
+            for f in functions: f.copy(observables, task_id, datafile)
+
+
     
     for f in functions:
         f.reshape(structure_dims, observables)
@@ -560,8 +601,8 @@ def get_data_funcmap_chain_ext(this_run,
     
     infostring = \
     f"""
-    Completed jobs: {len(jobs)}/{N_jobs}
-    MCMC Steps: {original_N_steps} with thinning = {thin} for {N_steps} recorded steps
+    Completed jobs:?
+    MCMC Steps: {N_chains} chains of {original_N_steps} for {original_N_steps*N_chains} with thinning = {thin} for {N_steps*N_chains} recorded steps
     Burn in: {Munch(MCMC_params).N_burn_in}
     Structure_names: {dict(zip(structure_names, structure_dims))}
     Ns = {Ns}
