@@ -2077,3 +2077,27 @@
         Total: 14.0 weeks
     
 ## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 7 chains of 5000 for 35000 with thinning = 10 for 3500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 52.0 minutes
+        Max: 20.0 hours
+        Total: 9.0 weeks
+    
+## Custom run Tsweep3_full
+    Completed jobs:?
+    MCMC Steps: 20 chains of 5000 for 100000 with thinning = 10 for 10000 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 10, 'Ts': 25}
+    Ns = [ 10  20  30  50  70 110 160 250]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 2.0 hours
+        Max: 1.0 days
+        Total: 14.0 weeks
+    
+## Custom run Tsweep3_binder
