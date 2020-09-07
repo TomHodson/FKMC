@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 import re
 from pathlib import Path
 import multiprocessing as mp
+from termcolor import colored
+
 
 
 import scipy
@@ -141,20 +143,20 @@ class extract(object):
         data = np.array(getattr(logs, self.obsname)) #adding the np.array(...) makes it work for bare floats
 
         shape = (len(Ns), N_jobs) + np.shape(data) #this works even is data is a float
-        observables[self.obsname] = np.full(shape=shape, fill_value = np.nan, dtype = data.dtype)
+        observables.flat[self.obsname] = np.full(shape=shape, fill_value = np.nan, dtype = data.dtype)
         approx_size = 4*product(shape) #assumes 64bit floats
         assert(approx_size < 1e9) #try not to use more than 1Gb per allocation
-        logger.info(f"observables['{self.obsname}'] = np.array(shape = {shape}, dtype = {data.dtype}) approx size: {approx_size/1e9:.2f}Gb")
+        logger.debug(f"observables.flat['{self.obsname}'] = np.array(shape = {shape}, dtype = {data.dtype}) approx size: {approx_size/1e9:.2f}Gb")
 
 
     def copy(self, observables, j, datafile):
         for i in range(len(observables.Ns)):
             if datafile[i] == None: continue #fail gracefully on partially computed results
-            observables[self.obsname][i, j] = getattr(datafile[i], self.obsname)
+            observables.flat[self.obsname][i, j] = getattr(datafile[i], self.obsname)
                 
               
     def reshape(self, structure_dims, observables):
-        o = observables[self.obsname]
+        o = observables.flat[self.obsname]
         observables[self.obsname] = o.reshape(o.shape[0:1] + structure_dims + o.shape[2:])
 
         observables.hints[self.obsname] = ('Ns',) + tuple(observables.structure_names) + ('MCMC_step',)
@@ -175,32 +177,33 @@ class mean_over_MCMC(object):
 
         shape = (len(Ns), N_jobs) + np.shape(data)[:-1] #this works even is data is a float
         self.taking_mean = (len(np.shape(data)) > 0)
-        observables[self.obsname] = np.full(shape=shape, fill_value = np.nan, dtype = data.dtype)
+        observables.flat[self.obsname] = np.full(shape=shape, fill_value = np.nan, dtype = data.dtype)
         
         if self.taking_mean:
-            observables['sigma_' + self.obsname] = np.full(shape=shape, fill_value = np.nan, dtype = data.dtype)
+            observables.flat['sigma_' + self.obsname] = np.full(shape=shape, fill_value = np.nan, dtype = data.dtype)
         
         approx_size = 4*product(shape) #assumes 64bit floats
         assert(approx_size < 1e9) #try not to use more than 1Gb per allocation
-        logger.debug(f"observables['{self.obsname}'] = np.array(shape = {shape}, dtype = {data.dtype}) approx size: {approx_size/1e9:.2f}Gb")
+        logger.debug(f"observables.flat['{self.obsname}'] = np.array(shape = {shape}, dtype = {data.dtype}) approx size: {approx_size/1e9:.2f}Gb")
 
 
     def copy(self, observables, j, datafile):
         for i in range(len(observables.Ns)):
             if datafile[i] == None: continue #fail gracefully on partially computed results
             data = getattr(datafile[i], self.obsname)
+            self.taking_mean = (len(np.shape(data)) > 0)
             if self.taking_mean:
-                observables[self.obsname][i, j] = data.mean(axis = -1)
+                observables.flat[self.obsname][i, j] = data.mean(axis = -1)
                 #print(i, self.obsname, data.shape, self.N_error_bins)
-                observables['sigma_' + self.obsname][i, j] = binned_error_estimate_multidim(data, N_bins = self.N_error_bins, axis = -1)
+                observables.flat['sigma_' + self.obsname][i, j] = binned_error_estimate_multidim(data, N_bins = self.N_error_bins, axis = -1)
             else:
-                observables[self.obsname][i, j] = data
+                observables.flat[self.obsname][i, j] = data
                 
                 
             
             
     def reshape(self, structure_dims, observables):
-        o = observables[self.obsname]
+        o = observables.flat[self.obsname]
         observables[self.obsname] = o.reshape(o.shape[0:1] + structure_dims + o.shape[2:])
 
         observables.hints[self.obsname] = ('Ns',) + tuple(observables.structure_names)
@@ -221,16 +224,16 @@ class IPRandDOS(object):
         dtype = np.float64
         
         observables['E_bins'] = self.E_bins
-        observables['IPR'] = np.full(shape=shape, fill_value = np.nan, dtype = dtype)
-        observables['DOS'] = np.full(shape=shape, fill_value = np.nan, dtype = dtype)
-        observables['dIPR'] = np.full(shape=shape, fill_value = np.nan, dtype = dtype)
-        observables['dDOS'] = np.full(shape=shape, fill_value = np.nan, dtype = dtype)
+        observables.flat['IPR'] = np.full(shape=shape, fill_value = np.nan, dtype = dtype)
+        observables.flat['DOS'] = np.full(shape=shape, fill_value = np.nan, dtype = dtype)
+        observables.flat['dIPR'] = np.full(shape=shape, fill_value = np.nan, dtype = dtype)
+        observables.flat['dDOS'] = np.full(shape=shape, fill_value = np.nan, dtype = dtype)
     
         
         approx_size = 4*product(shape) #assumes 64bit floats
         assert(approx_size < 1e9) #try not to use more than 1Gb per allocation
-        logger.debug(f"observables['IPRs'] = np.array(shape = {shape}, dtype = {dtype}) approx size: {approx_size/1e9:.2f}Gb")
-        logger.debug(f"observables['DOS'] = np.array(shape = {shape}, dtype = {dtype}) approx size: {approx_size/1e9:.2f}Gb")
+        logger.debug(f"observables.flat['IPRs'] = np.array(shape = {shape}, dtype = {dtype}) approx size: {approx_size/1e9:.2f}Gb")
+        logger.debug(f"observables.flat['DOS'] = np.array(shape = {shape}, dtype = {dtype}) approx size: {approx_size/1e9:.2f}Gb")
 
 
     def copy(self, observables, j, datafile):
@@ -245,14 +248,14 @@ class IPRandDOS(object):
             DOS, dDOS, IPR, dIPR = compute_IPR_and_DOS_histograms(raw_eigenvals,
                                                                   raw_IPRs, self.E_bins, self.bootstrap_bins)
 
-            observables['DOS'][i, j, :] = DOS
-            observables['IPR'][i, j, :] = IPR
-            observables['dDOS'][i, j, :] = dDOS
-            observables['dIPR'][i, j, :] = dIPR
+            observables.flat['DOS'][i, j, :] = DOS
+            observables.flat['IPR'][i, j, :] = IPR
+            observables.flat['dDOS'][i, j, :] = dDOS
+            observables.flat['dIPR'][i, j, :] = dIPR
             
     def reshape(self, structure_dims, observables):
         for name in ['DOS', 'IPR', 'dDOS', 'dIPR']:
-            o = observables[name]
+            o = observables.flat[name]
             observables[name] = o.reshape(o.shape[0:1] + structure_dims + o.shape[2:])
             observables.hints[name] = ('Ns',) + tuple(observables.structure_names) +  ('energy index',)
 
@@ -470,29 +473,79 @@ def datafile_concat(datafiles, Ns):
                 datafile[i][name] = np.concatenate([getattr(log[i], name) for log in datafiles], axis = axis)
     return datafile
 
+def _get_data_funcmap_chain_ext_copy_data(o):
+    with mp.Pool(18) as p:
+        try: todo = set(o.task_id_range)
+        except KeyError: todo = set(range(o.N_tasks))
+        todo = sorted(todo - o.processed_task_ids)
+        logger.debug(f"todo: {todo}") 
+        
+        for task_id in todo:
+            if task_id in o.processed_task_ids: continue
+            
+            filename_list = [o.datapath / f'{task_id}_{chain_id}.npz' for chain_id in range(o.N_chains)]
+            
+            def check_exists(f):
+                if not f.exists(): 
+                    logger.debug(f'{f} is expected but missing!')
+                    raise ValueError
+            
+            try:
+                list(map(check_exists, filename_list))
+            except:
+                logger.debug(f"task id {task_id} had no files to load")
+                print(colored(task_id, 'red'), end = ' ')
+                continue
+
+            datafile_list = list(p.map(datafile_load, filename_list))
+            
+            #check that the final N is present in all the datafiles
+            finished = [d[-1] is not None for d in datafile_list]
+            if not all(finished):
+                logger.debug(f'not all of {task_id} is finished')
+                print(colored(task_id, 'yellow'), end = ' ')
+                continue
+            
+            #convert all those datafiles to one
+            datafile = datafile_concat(datafile_list, o.Ns)
+            
+            for f in o.functions: f.copy(o, task_id, datafile)
+            
+            #should only get to here if everything went well!
+            o.processed_task_ids.add(task_id)
+            print(task_id, end = ' ')
+
 def get_data_funcmap_chain_ext(this_run,
             functions = [],
             strict_chain_length = True,
             chain_length = None,
+            task_id_range = None,
             ):
     
     '''
     '''
-    this_run = this_run.expanduser()
-    logger.warning(f'looking in {this_run}')
-    data = this_run / 'data'
-    code = this_run / 'code'
+    o = Munch()
+    o.functions = functions
+    o.flat = Munch() #for the flat versions of the copied data
+    o.hints = Munch() #for the hints
+    o.processed_task_ids = set() #to keep track of what files have been processed
+    if task_id_range is not None: o.task_id_range = task_id_range
+    
+    o.this_run = this_run.expanduser()
+    logger.info(f'looking in {o.this_run}')
+    o.datapath = o.this_run / 'data'
+    o.codepath = o.this_run / 'code'
     
     #get the batch params from the original script
-    print(list(code.glob('*.py')))
-    py_script = next(code.glob('*.py'))
-    context = execute_script(py_script)
-    batch_params = Munch(context.batch_params)
-    structure_names = batch_params.structure_names
-    structure_dims = tuple(d.size for d in batch_params.structure_dimensions)
+    print(list(o.codepath.glob('*.py')))
+    o.py_script = next(o.codepath.glob('*.py'))
+    context = execute_script(o.py_script)
+    o.batch_params = Munch(context.batch_params)
+    o.structure_names = o.batch_params.structure_names
+    o.structure_dims = tuple(d.size for d in o.batch_params.structure_dimensions)
     
-    logger.debug(f'structure_names = {structure_names}')
-    logger.debug(f'structure_dims = {structure_dims}')
+    logger.debug(f'structure_names = {o.structure_names}')
+    logger.debug(f'structure_dims = {o.structure_dims}')
     
     #calculate the epected number of jobs
     def name2id(n): return tuple(map(int,n.split('_')))
@@ -500,24 +553,23 @@ def get_data_funcmap_chain_ext(this_run,
     datafiles = dict()
     task_ids = set()
     chain_ids = defaultdict(set)
-    for f in data.glob('*.npz'):
+    for f in o.datapath.glob('*.npz'):
         task_id, chain_id = name2id(f.stem)
         datafiles[(task_id, chain_id)] = f
         task_ids.add(task_id)
         chain_ids[task_id].add(chain_id)
     
     
-    N_tasks = product(structure_dims)
+    o.N_tasks = product(o.structure_dims)
+    o.N_chains = min(max(c) for c in chain_ids.values()) + 1
     
-    N_chains = min(max(c) for c in chain_ids.values()) + 1
-    
-    logger.debug(f'Expected number of tasks {N_tasks}')
+    logger.debug(f'Expected number of tasks {o.N_tasks}')
     logger.debug(f'Measured number of tasks {len(task_ids)}')
     logger.debug(f'Expected number of chains {chain_length}')
-    logger.debug(f'Measured number of chains {N_chains}')
-    if chain_length is not None: N_chains = chain_length
+    logger.debug(f'Measured number of chains {o.N_chains}')
+    if chain_length is not None: o.N_chains = chain_length
     
-    functions += [extract('time'), 
+    o.functions += [extract('time'), 
                   mean_over_MCMC('accept_rates', N_error_bins = 1),
                   mean_over_MCMC('proposal_rates', N_error_bins = 1)]
     
@@ -527,85 +579,52 @@ def get_data_funcmap_chain_ext(this_run,
     
     #get stuff from an an example datafile
     d = Munch(np.load(next(iter(datafiles.values())), allow_pickle = True))
-    Ns = d['Ns']
     parameters = d['parameters'][()]
     MCMC_params = d['MCMC_params'][()]
     
     logger.info(f'Logger keys: {list(d.keys())} \n')
     logger.info(f"MCMC_params keys: {list(MCMC_params.keys())} \n")
     
-    original_N_steps = MCMC_params['N_steps']
-    thin = MCMC_params['thin']
-    N_steps = original_N_steps // thin
+    o.original_N_steps = MCMC_params['N_steps']
+    o.thin = MCMC_params['thin']
+    o.N_steps = o.original_N_steps // o.thin
     
-    logger.info(f'Overall steps = {N_steps * N_chains}')
+    logger.info(f'Overall steps = {o.N_steps * o.N_chains}')
     
-    logger.debug(list(zip(count(), structure_names, structure_dims)))
+    logger.debug(list(zip(count(), o.structure_names, o.structure_dims)))
 
     possible_observables = [s for s in dir(d.logs[0]) if not s.startswith("_")]
-    logger.info(f'available observables = {possible_observables}')
+    logger.debug(f'available observables = {possible_observables}')
     
     logger.debug(f'Allocating space for the requested observables:')
-    observables = Munch()
-    for f in functions: f.allocate(observables, example_datafile = d, N_jobs = N_tasks)
+    for f in o.functions: f.allocate(o, example_datafile = d, N_jobs = o.N_tasks)
     
-    #copy extra info over, note that structure_names might appear as a key in d, but I just overwrite it for now
-    observables.update({k : v[()] for k,v in d.items() if k != 'logs'})
-    observables.structure_names = structure_names
-    observables.structure_dims = structure_dims
-    observables.batch_params = batch_params
-    observables['hints'] = Munch() 
+    #copy extra info over ignoring data that alread appears
+    [logger.warn(f'data files contain a key {k} which observables already has, not overwriting') for k,v in d.items() if k in o]
+    o.update({k : v[()] for k,v in d.items() if k != 'logs' and k not in o})
     
-    for name, dim in zip(structure_names, batch_params.structure_dimensions):
-        observables[name] = dim
+    for name, dim in zip(o.structure_names, o.batch_params.structure_dimensions):
+        if name in o: 
+            logger.warning(f'{name} is already a key in observables but its a dimension name too!')
+            continue
+        o[name] = dim
     
-    with mp.Pool(18) as p:
-        for task_id in range(N_tasks):
-            print(task_id, end = ' ')
-
-            filename_list = [data / f'{task_id}_{chain_id}.npz' for chain_id in  range(N_chains)]
-            
-            def check_exists(f):
-                if not f.exists(): 
-                    raise ValueError(f'{f} is expected but missing!')
-            map(check_exists, filename_list)
-
-            datafile_list = list(p.map(datafile_load, filename_list))
-
-            #datafile_list = list(map(datafile_load, filename_list))
-            
-            #check that the final N is present in all the datafiles
-            finished = [d[-1] is not None for d in datafile_list]
-            if not all(finished):
-                print(f'not all of {task_id} is not finished')
-                print(finished)
-                continue
-            
-            #for d in datafile_list: print(d[-1].accept_rates.shape)
-            datafile = datafile_concat(datafile_list, Ns)
-            
-
-            #convert all those datafiles to one
-            for f in functions: f.copy(observables, task_id, datafile)
-
-
+    _get_data_funcmap_chain_ext_copy_data(o)
     
-    for f in functions:
-        f.reshape(structure_dims, observables)
+    for f in o.functions:
+        f.reshape(o.structure_dims, o)
     
    
     logger.info('########################################################################\n')
-    logger.info(f'Observables has keys: {observables.keys()}')
-    
-    o = observables = Munch(observables)
+    logger.info(f'Observables has keys: {o.keys()}')
     
     infostring = \
     f"""
     Completed jobs:?
-    MCMC Steps: {N_chains} chains of {original_N_steps} for {original_N_steps*N_chains} with thinning = {thin} for {N_steps*N_chains} recorded steps
+    MCMC Steps: {o.N_chains} chains of {o.original_N_steps} for {o.original_N_steps*o.N_chains} with thinning = {o.thin} for {o.N_steps*o.N_chains} recorded steps
     Burn in: {Munch(MCMC_params).N_burn_in}
-    Structure_names: {dict(zip(structure_names, structure_dims))}
-    Ns = {Ns}
+    Structure_names: {dict(zip(o.structure_names, o.structure_dims))}
+    Ns = {o.Ns}
     Runtimes: 
         Average: {timefmt(np.nanmean(o.time.sum(axis=0)))}
         Min: {timefmt(np.nanmin(o.time.sum(axis=0)))}
@@ -613,6 +632,65 @@ def get_data_funcmap_chain_ext(this_run,
         Total: {timefmt(np.nansum(o.time))}
     """[1:]
     logger.info(infostring)
-    update_description(this_run.stem, infostring)
+    update_description(o.this_run.stem, infostring)
     
-    return observables
+    return o
+
+def incremental_get_data_funcmap_chain_ext(o,
+            functions = [],
+            strict_chain_length = True,
+            task_id_range = None,
+            ):
+    
+    '''
+    '''
+    o.functions = functions + [extract('time'), 
+              mean_over_MCMC('accept_rates', N_error_bins = 1),
+              mean_over_MCMC('proposal_rates', N_error_bins = 1)]
+    
+    if task_id_range is not None: o.task_id_range = task_id_range
+    
+    #calculate the epected number of jobs
+    def name2id(n): return tuple(map(int,n.split('_')))
+    
+    datafiles = dict()
+    task_ids = set()
+    chain_ids = defaultdict(set)
+    for f in o.datapath.glob('*.npz'):
+        task_id, chain_id = name2id(f.stem)
+        datafiles[(task_id, chain_id)] = f
+        task_ids.add(task_id)
+        chain_ids[task_id].add(chain_id)
+
+    N_chains = min(max(c) for c in chain_ids.values()) + 1
+    if N_chains > o.N_chains: 
+        logger.info("A whole new chain since last time! regenerate the entire thing because new space needs to be allocated")
+        return
+    o.N_chains = N_chains
+    
+    _get_data_funcmap_chain_ext_copy_data(o)
+    
+    #for f in o.functions:
+    #    f.reshape(o.structure_dims, o)
+    
+   
+    logger.info('########################################################################\n')
+    logger.info(f'Observables has keys: {o.keys()}')
+    
+    infostring = \
+    f"""
+    Completed jobs:?
+    MCMC Steps: {o.N_chains} chains of {o.original_N_steps} for {o.original_N_steps*o.N_chains} with thinning = {o.thin} for {o.N_steps*o.N_chains} recorded steps
+    Burn in: {o.MCMC_params.N_burn_in}
+    Structure_names: {dict(zip(o.structure_names, o.structure_dims))}
+    Ns = {o.Ns}
+    Runtimes: 
+        Average: {timefmt(np.nanmean(o.time.sum(axis=0)))}
+        Min: {timefmt(np.nanmin(o.time.sum(axis=0)))}
+        Max: {timefmt(np.nanmax(o.time.sum(axis=0)))}
+        Total: {timefmt(np.nansum(o.time))}
+    
+    """[1:]
+    logger.info(infostring)
+    
+    return o
