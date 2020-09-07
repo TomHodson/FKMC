@@ -6,6 +6,7 @@ numpy
 scipy
 matplotlib
 munch
+termcolor
 
 #jupyterlab and addons
 jupyterlab
