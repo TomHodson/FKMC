@@ -104,9 +104,9 @@ def FK_mcmc(
     update_batch = (N_steps + N_burn_in) // 10
     for i in range(N_steps + N_burn_in):
         if (i%update_batch == 0):
-            c_r = 1 - (np.sum(logger.classical_accept_rates) / np.sum(logger.proposal_rates))
-            q_r = 1 - np.sum(logger.accept_rates) / np.sum(logger.classical_accept_rates)
-            o_r = 1 - np.sum(logger.accept_rates) / np.sum(logger.proposal_rates)
+            c_r = 1 - (np.sum(logger.classical_accept_rates) / max(1, np.sum(logger.proposal_rates)))
+            q_r = 1 - np.sum(logger.accept_rates) / max(1, np.sum(logger.classical_accept_rates))
+            o_r = 1 - np.sum(logger.accept_rates) / max(1, np.sum(logger.proposal_rates))
             print(f"N = {N_sites}: {100*i/(N_steps+N_burn_in):.0f}% through after {(time() - t0)/60:.2f}m \
             rejects: classical = {c_r*100:.0f}% quantum = {q_r*100:.0f}% overall = {o_r*100:.0f}%")
         
