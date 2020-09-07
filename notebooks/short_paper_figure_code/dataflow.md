@@ -42,9 +42,14 @@ High level:
     /data/users/tch14/slurm_runs/117969 --                                                 --> pickled_data/TJ_phase_data.pickle ---> final_figures.ipynb
                                           |--->(on CMTH) process_2D_phase_diagrams.ipynb -|                                         |          
     /data/users/tch14/slurm_runs/117734 --                                                 --> pickled_data/TU_phase_data.pickle ---
-                                          |                                                  |       
-                                          |        
-                                          |--> gap_opening_TU_plot.ipynb ---> ?
+                                                               
+    
+    pickled_data/TU_phase_data.pickle --> gap_opening_TU_plot.ipynb --> TU_phase_gap_gapless_line.pickle --> final_figures
+    
+    
+    ~/HPC_data/TU_phase_diagram3 ---> process_2D_phase_diagrams.ipynb ----> ???
+    
+    ~/HPC_data/TU_phase_diagram_binder_line --->
 
 
 # Figures for the short paper
