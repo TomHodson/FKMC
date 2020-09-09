@@ -59,7 +59,7 @@ class CX1job(object):
                      '-N', f'{self.job_name}',
                      '-J', f'{indices}',
                      #'-lselect=1:ncpus=10:mem=20gb:avx=true',
-                     '-lselect=1:ncpus=8:mem=10gb:cpumodel=24',
+                     '-lselect=1:ncpus=1:mem=5gb:cpumodel=24',
                      #'-lselect=1:ncpus=8:mem=10gb:avx2=true',
                      '-lwalltime=24:00:00'if not self.debug else '-lwalltime=00:10:00',
                      '-o', str(self.submit_dir / 'logs'),

@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+"""
+Submit multiple jobs with dependancies chained together.
+
+Example for a first submission:
+    ./submit.py cdw_TJ_critical_line.ipynb cdw_TJ_critical_line --chain-exts="range(5)"
+
+To run some more chain extensions:
+    ./submit.py cdw_TJ_critical_line.ipynb cdw_TJ_critical_line --chain-exts="range(5,10)" --after=2160963
+"""
+
+
 from pathlib import Path
 import subprocess as sb
 import shutil
@@ -13,7 +24,7 @@ from subprocess import CalledProcessError
 
 from batch_functions import *
    
-parser = argparse.ArgumentParser(description='Submit multiple jobs with dependancies chained together.')
+parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('script', help='The ipynb script to use.', type = Path)
 parser.add_argument('out', help='The output folder name, also used as the job name.', type = Path)
 parser.add_argument('--debug', '-d', action = 'store_true', default = False, help='an integer for the accumulator')

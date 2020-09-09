@@ -328,7 +328,7 @@ def get_data_funcmap(this_run,
     #some strucure dims can be inferred from the length of things in the namespace like Ts or Ns or repeats
     def infer(data, dimension_name, dimension_size):
         if dimension_size != None: return dimension_size #when the dimension is just directly in structure_dims
-        if dimension_name in d and d[dimension_name].ndim == 0: return d[dimension_name].shape[0] #when the name corresponds to something like Ts or Ns
+        if dimension_name in d and d[dimension_name].ndim == 1: return d[dimension_name].shape[0] #when the name corresponds to something like Ts or Ns
         if dimension_name in d: return d[dimension_name] #when the struct is just directly in the config as in d[repeats] = 10
         return None
         
@@ -372,13 +372,16 @@ def get_data_funcmap(this_run,
     
     logger.debug(f'Allocating space for the requested observables:')
     observables = Munch()
-    for f in functions: f.allocate(observables, example_datafile = d, N_jobs = N_jobs)
-    
     #copy extra info over, note that structure_names might appear as a key in d, but I just overwrite it for now
     observables.update({k : v[()] for k,v in d.items() if k != 'logs'})
     observables.structure_names = structure_names
     observables.structure_dims = structure_dims
-    observables['hints'] = Munch() 
+    observables.hints = Munch() 
+    observables.flat = Munch()
+    
+    for f in functions: f.allocate(observables, example_datafile = d, N_jobs = N_jobs)
+    
+
     
     p = ProgressReporter(len(datafiles))
     
@@ -450,8 +453,26 @@ def execute_script(py_script):
 from collections import defaultdict
 
 
-def datafile_load(filename):
-    return np.load(filename, allow_pickle = True)['logs']
+def datafile_load(f):
+    #check the file exists
+    if not f.exists(): 
+        logger.debug(f'{f} is expected but missing!')
+        return None
+    
+    #see if it can be parsed
+    try:
+        d = np.load(f, allow_pickle = True)['logs']
+    except:
+        logger.debug(f'{f} exists but cannot be loaded.')
+        return None
+    
+    #check that the final N is present in the file
+    if d is None:
+        logger.debug(f'{f} is only partially finished.')
+        return None
+    
+    return d
+
 
 def datafile_concat(datafiles, Ns):
     #datafiles is a list of lists where the outer is chain_ext and inner is Ns
@@ -476,7 +497,7 @@ def datafile_concat(datafiles, Ns):
 def _get_data_funcmap_chain_ext_copy_data(o):
     with mp.Pool(18) as p:
         try: todo = set(o.task_id_range)
-        except KeyError: todo = set(range(o.N_tasks))
+        except AttributeError: todo = set(range(o.N_tasks))
         todo = sorted(todo - o.processed_task_ids)
         logger.debug(f"todo: {todo}") 
         
@@ -485,26 +506,20 @@ def _get_data_funcmap_chain_ext_copy_data(o):
             
             filename_list = [o.datapath / f'{task_id}_{chain_id}.npz' for chain_id in range(o.N_chains)]
             
-            def check_exists(f):
-                if not f.exists(): 
-                    logger.debug(f'{f} is expected but missing!')
-                    raise ValueError
-            
-            try:
-                list(map(check_exists, filename_list))
-            except:
-                logger.debug(f"task id {task_id} had no files to load")
-                print(colored(task_id, 'red'), end = ' ')
-                continue
-
+            #datafile_load catches three possible errors and returns None:
+            #if the file doesn't exist, if it can't be read, or if it is only partial.
             datafile_list = list(p.map(datafile_load, filename_list))
             
-            #check that the final N is present in all the datafiles
-            finished = [d[-1] is not None for d in datafile_list]
-            if not all(finished):
-                logger.debug(f'not all of {task_id} is finished')
-                print(colored(task_id, 'yellow'), end = ' ')
-                continue
+                
+            #check if there are any problem datafiles
+            problems = [d is None for d in datafile_list]
+            if any(problems):
+                if all(problems): #give up
+                    print(colored(task_id, 'red'), end = ' ')
+                    continue 
+                else: #deal with it and carry on
+                    print(colored(task_id, 'yellow'), end = ' ')
+                    datafile_list = [d for d in datafile_list if d is not None]
             
             #convert all those datafiles to one
             datafile = datafile_concat(datafile_list, o.Ns)

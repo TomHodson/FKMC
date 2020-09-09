@@ -2101,3 +2101,255 @@
         Total: 14.0 weeks
     
 ## Custom run Tsweep3_binder
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 4, 'Us': 50, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 1.0 hours
+        Min: 7.0 minutes
+        Max: 6.0 hours
+        Total: 20.0 weeks
+    
+## Custom run TU_phase_diagram2_finer_detail
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 4, 'Us': 50, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 12.0 minutes
+        Max: 7.0 hours
+        Total: 5.0 days
+    
+## Custom run TU_phase_diagram2_finer_detail
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 4, 'Us': 50, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 12.0 minutes
+        Max: 7.0 hours
+        Total: 5.0 days
+    
+## Custom run TU_phase_diagram2_finer_detail
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 4, 'Us': 50, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 12.0 minutes
+        Max: 7.0 hours
+        Total: 5.0 days
+    
+## Custom run TU_phase_diagram2_finer_detail
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 4, 'Us': 50, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 12.0 minutes
+        Max: 7.0 hours
+        Total: 5.0 days
+    
+## Custom run TU_phase_diagram2_finer_detail
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 4, 'Us': 50, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 14.0 minutes
+        Min: 13.0 minutes
+        Max: 15.0 minutes
+        Total: 2.0 hours
+    
+## Custom run TU_phase_diagram2_finer_detail
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 4, 'Us': 50, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 14.0 minutes
+        Min: 13.0 minutes
+        Max: 15.0 minutes
+        Total: 2.0 hours
+    
+## Custom run TU_phase_diagram2_finer_detail
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 4, 'Us': 50, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 14.0 minutes
+        Min: 13.0 minutes
+        Max: 15.0 minutes
+        Total: 2.0 hours
+    
+## Custom run TU_phase_diagram2_finer_detail
+    Completed jobs: 900/900
+    MCMC Steps: 100000 with thinning = 100 for 1000 recorded steps
+    Burn in: 10000
+    Structure_names: {'repeats': array(1), 'Js': 30, 'Ts': 30}
+    Ns = [  4   8  16  32  64 128]
+    Runtimes: 
+        Average: 11.0 hours
+        Min: 1.0 hours
+        Max: 2.0 days
+        Total: 63.0 weeks
+    
+## Custom run TJ_phase_diagram
+    Completed jobs: 830/900
+    MCMC Steps: 100000 with thinning = 100 for 1000 recorded steps
+    Burn in: 10000
+    Structure_names: {'repeats': array(1), 'Us': 30, 'Ts': 30}
+    Ns = [  4   8  16  32  64 128]
+    Runtimes: 
+        Average: 8.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 43.0 weeks
+    
+## Custom run TU_phase_diagram
+    Completed jobs:?
+    MCMC Steps: 1 chains of 1000 for 1000 with thinning = 10 for 100 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 4, 'Us': 40, 'Ts': 40}
+    Ns = [250]
+    Runtimes: 
+        Average: 8.0 minutes
+        Min: 2.0 minutes
+        Max: 23.0 minutes
+        Total: 1.0 hours
+    
+## Custom run TU_phase_diagram3
+    Completed jobs:?
+    MCMC Steps: 1 chains of 1000 for 1000 with thinning = 10 for 100 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 4, 'Us': 40, 'Ts': 40}
+    Ns = [250]
+    Runtimes: 
+        Average: 17.0 minutes
+        Min: 2.0 minutes
+        Max: 1.0 hours
+        Total: 1.0 weeks
+    
+## Custom run TU_phase_diagram3
+    Completed jobs:?
+    MCMC Steps: 1 chains of 1000 for 1000 with thinning = 10 for 100 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 4, 'Us': 40, 'Ts': 40}
+    Ns = [250]
+    Runtimes: 
+        Average: 17.0 minutes
+        Min: 2.0 minutes
+        Max: 1.0 hours
+        Total: 1.0 weeks
+    
+## Custom run TU_phase_diagram3
+    Completed jobs:?
+    MCMC Steps: 2 chains of 1000 for 2000 with thinning = 10 for 200 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 4, 'Us': 40, 'Ts': 40}
+    Ns = [250]
+    Runtimes: 
+        Average: 25.0 minutes
+        Min: 4.0 minutes
+        Max: 1.0 hours
+        Total: 1.0 days
+    
+## Custom run TU_phase_diagram3
+    Completed jobs:?
+    MCMC Steps: 2 chains of 1000 for 2000 with thinning = 10 for 200 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 4, 'Us': 40, 'Ts': 40}
+    Ns = [250]
+    Runtimes: 
+        Average: 39.0 minutes
+        Min: 2.0 minutes
+        Max: 8.0 hours
+        Total: 24.0 weeks
+    
+## Custom run TU_phase_diagram3
+    Completed jobs:?
+    MCMC Steps: 3 chains of 1000 for 3000 with thinning = 10 for 300 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 10.0 minutes
+        Max: 12.0 hours
+        Total: 5.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 3 chains of 1000 for 3000 with thinning = 10 for 300 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 10.0 minutes
+        Max: 12.0 hours
+        Total: 5.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 3 chains of 1000 for 3000 with thinning = 10 for 300 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 10.0 minutes
+        Max: 12.0 hours
+        Total: 5.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 4 chains of 1000 for 4000 with thinning = 10 for 400 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 12.0 minutes
+        Max: 15.0 hours
+        Total: 6.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 3 chains of 1000 for 3000 with thinning = 10 for 300 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 20, 'Ts': 10}
+    Ns = [250]
+    Runtimes: 
+        Average: 3.0 hours
+        Min: 1.0 hours
+        Max: 11.0 hours
+        Total: 23.0 weeks
+    
+## Custom run gap_gapped_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 3 chains of 1000 for 3000 with thinning = 10 for 300 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 20, 'Ts': 10}
+    Ns = [250]
+    Runtimes: 
+        Average: 3.0 hours
+        Min: 1.0 hours
+        Max: 11.0 hours
+        Total: 23.0 weeks
+    
+## Custom run gap_gapped_TU_critical_line
