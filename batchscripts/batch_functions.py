@@ -46,8 +46,11 @@ class CX1job(object):
         self.debug = debug
     def submit(self, held = False):
         #http://docs.adaptivecomputing.com/torque/4-0-2/Content/topics/commands/qsub.htm
-        start, stop = self.array_indices
-        indices = f'{start}-{stop-1}'
+        if isinstance(self.array_indices, str):
+            indices = self.array_indices
+        else:
+            start, stop = self.array_indices
+            indices = f'{start}-{stop-1}'
     
         args = ['qsub', 
                      '-v', ', '.join([
