@@ -2353,3 +2353,387 @@
         Total: 23.0 weeks
     
 ## Custom run gap_gapped_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 3 chains of 1000 for 3000 with thinning = 10 for 300 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 10.0 minutes
+        Max: 12.0 hours
+        Total: 5.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 5 chains of 1000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 16.0 minutes
+        Max: 16.0 hours
+        Total: 8.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 6 chains of 1000 for 6000 with thinning = 10 for 600 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 20, 'Ts': 10}
+    Ns = [250]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 3.0 hours
+        Max: 17.0 hours
+        Total: 41.0 weeks
+    
+## Custom run gap_gapped_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 5 chains of 1000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 16.0 minutes
+        Max: 16.0 hours
+        Total: 8.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 7 chains of 1000 for 7000 with thinning = 10 for 700 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 3.0 hours
+        Min: 25.0 minutes
+        Max: 20.0 hours
+        Total: 10.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 3 chains of 1000 for 3000 with thinning = 10 for 300 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 10.0 minutes
+        Max: 12.0 hours
+        Total: 5.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 7 chains of 1000 for 7000 with thinning = 10 for 700 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 3.0 hours
+        Min: 25.0 minutes
+        Max: 20.0 hours
+        Total: 10.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 10 chains of 1000 for 10000 with thinning = 10 for 1000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 20, 'Ts': 10}
+    Ns = [250]
+    Runtimes: 
+        Average: 10.0 hours
+        Min: 4.0 hours
+        Max: 1.0 days
+        Total: 61.0 weeks
+    
+## Custom run gap_gapped_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 3 chains of 1000 for 3000 with thinning = 10 for 300 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 10.0 minutes
+        Max: 12.0 hours
+        Total: 5.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 10 chains of 1000 for 10000 with thinning = 10 for 1000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 34.0 minutes
+        Max: 1.0 days
+        Total: 16.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 10 chains of 1000 for 10000 with thinning = 10 for 1000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 6.0 hours
+        Min: 34.0 minutes
+        Max: 1.0 days
+        Total: 16.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 7 chains of 1000 for 7000 with thinning = 10 for 700 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 3.0 hours
+        Min: 25.0 minutes
+        Max: 20.0 hours
+        Total: 10.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 20 chains of 1000 for 20000 with thinning = 10 for 2000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 9.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 27.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 18 chains of 1000 for 18000 with thinning = 10 for 1800 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 10.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 27.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 32 chains of 1000 for 32000 with thinning = 10 for 3200 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 13.0 hours
+        Min: 1.0 hours
+        Max: 2.0 days
+        Total: 40.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 30 chains of 1000 for 30000 with thinning = 10 for 3000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 16.0 hours
+        Min: 1.0 hours
+        Max: 3.0 days
+        Total: 45.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 32 chains of 1000 for 32000 with thinning = 10 for 3200 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 13.0 hours
+        Min: 1.0 hours
+        Max: 2.0 days
+        Total: 40.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 20 chains of 1000 for 20000 with thinning = 10 for 2000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 11.0 hours
+        Min: 1.0 hours
+        Max: 2.0 days
+        Total: 30.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 5 chains of 1000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 16.0 minutes
+        Max: 16.0 hours
+        Total: 8.0 weeks
+    
+## Custom run cdw_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 5 chains of 5000 for 25000 with thinning = 10 for 2500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 5, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 7.0 hours
+        Min: 26.0 minutes
+        Max: 19.0 hours
+        Total: 11.0 weeks
+    
+## Custom run gap_open
+    Completed jobs:?
+    MCMC Steps: 5 chains of 5000 for 25000 with thinning = 10 for 2500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 5, 'Ts': 50}
+    Ns = [250]
+    Runtimes: 
+        Average: 7.0 hours
+        Min: 26.0 minutes
+        Max: 19.0 hours
+        Total: 11.0 weeks
+    
+## Custom run gap_open
+    Completed jobs:?
+    MCMC Steps: 1 chains of 5000 for 5000 with thinning = 10 for 500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 5, 'Ts': 50}
+    Ns = [ 60. 120. 270.]
+    Runtimes: 
+        Average: 4.0 hours
+        Min: 21.0 minutes
+        Max: 15.0 hours
+        Total: 6.0 weeks
+    
+## Custom run gap_open_U=2
+    Completed jobs:?
+    MCMC Steps: 2 chains of 5000 for 10000 with thinning = 10 for 1000 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 5, 'Ts': 50}
+    Ns = [ 60. 120. 270.]
+    Runtimes: 
+        Average: 7.0 hours
+        Min: 31.0 minutes
+        Max: 1.0 days
+        Total: 10.0 weeks
+    
+## Custom run gap_open_U=2
+    Completed jobs:?
+    MCMC Steps: 10 chains of 1000 for 10000 with thinning = 10 for 1000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Us': 20, 'Ts': 10}
+    Ns = [250]
+    Runtimes: 
+        Average: 10.0 hours
+        Min: 4.0 hours
+        Max: 1.0 days
+        Total: 61.0 weeks
+    
+## Custom run gap_gapped_TU_critical_line
+    Completed jobs:?
+    MCMC Steps: 30 chains of 1000 for 30000 with thinning = 10 for 3000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 16.0 hours
+        Min: 1.0 hours
+        Max: 3.0 days
+        Total: 45.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 30 chains of 1000 for 30000 with thinning = 10 for 3000 recorded steps
+    Burn in: 1000
+    Structure_names: {'Rs': 5, 'Js': 10, 'Ts': 10}
+    Ns = [250 160 110]
+    Runtimes: 
+        Average: 16.0 hours
+        Min: 1.0 hours
+        Max: 3.0 days
+        Total: 45.0 weeks
+    
+## Custom run cdw_TJ_critical_line
+    Completed jobs:?
+    MCMC Steps: 4 chains of 5000 for 20000 with thinning = 10 for 2000 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 5, 'Ts': 50}
+    Ns = [ 60. 120. 270.]
+    Runtimes: 
+        Average: 11.0 hours
+        Min: 1.0 hours
+        Max: 1.0 days
+        Total: 17.0 weeks
+    
+## Custom run gap_open_U=2
+    Completed jobs:?
+    MCMC Steps: 5 chains of 5000 for 25000 with thinning = 10 for 2500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 5, 'Ts': 50}
+    Ns = [ 60. 120. 270.]
+    Runtimes: 
+        Average: 15.0 hours
+        Min: 1.0 hours
+        Max: 2.0 days
+        Total: 22.0 weeks
+    
+## Custom run gap_open_U=2
+    Completed jobs:?
+    MCMC Steps: 5 chains of 5000 for 25000 with thinning = 10 for 2500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 5, 'Ts': 10}
+    Ns = [ 60. 120. 270.]
+    Runtimes: 
+        Average: 1.0 hours
+        Min: 1.0 hours
+        Max: 3.0 hours
+        Total: 3.0 days
+    
+## Custom run gap_opening_U=2_low_temp
+    Completed jobs:?
+    MCMC Steps: 5 chains of 5000 for 25000 with thinning = 10 for 2500 recorded steps
+    Burn in: 0
+    Structure_names: {'Rs': 5, 'Ts': 50}
+    Ns = [ 60. 120. 270.]
+    Runtimes: 
+        Average: 15.0 hours
+        Min: 1.0 hours
+        Max: 2.0 days
+        Total: 22.0 weeks
+    
+## Custom run gap_open_U=2
+    Completed jobs:?
+    MCMC Steps: 5 chains of 5000 for 25000 with thinning = 10 for 2500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 5, 'Ts': 10}
+    Ns = [ 60. 120. 270.]
+    Runtimes: 
+        Average: 1.0 hours
+        Min: 1.0 hours
+        Max: 3.0 hours
+        Total: 3.0 days
+    
+## Custom run gap_opening_U=2_low_temp
+    Completed jobs:?
+    MCMC Steps: 5 chains of 5000 for 25000 with thinning = 10 for 2500 recorded steps
+    Burn in: 5000
+    Structure_names: {'Rs': 5, 'Ts': 5}
+    Ns = [ 60. 120. 270.]
+    Runtimes: 
+        Average: 2.0 hours
+        Min: 2.0 hours
+        Max: 4.0 hours
+        Total: 2.0 days
+    
+## Custom run gap_opening_U=2_low_temp2

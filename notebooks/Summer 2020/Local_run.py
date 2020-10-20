@@ -15,7 +15,7 @@ make_initial_state = lambda N: np.arange(N, dtype = np.float64) % 2 #a CDW initi
 J = 5
 U = 5
 alpha = 1.25
-jobdir = Path('/workspace/tch14/local_run_data/run_8_T=2.5_U=5')
+jobdir = Path('~/HPC_data/local_run_data/run_9_T=2.5_U=5').expanduser()
 jobdir.mkdir(parents=False, exist_ok=False)
 
 logs = np.empty(shape = len(Ns), dtype = object)
@@ -29,7 +29,7 @@ for j in range(10000):
         parameters = dict(t = 1, alpha = alpha, mu = 0, beta = 1/T, J = J, U = U, normalise = True)
         MCMC_params = dict(
                 state = previous_states[i],
-                N_steps = int(500),
+                N_steps = int(100),
                 N_burn_in = int(0),
                 thin = 10,
                 logger = Eigenspectrum_IPR_all(bins = 10000, limit = 20),

@@ -30,6 +30,7 @@ parser.add_argument('out', help='The output folder name, also used as the job na
 parser.add_argument('--debug', '-d', action = 'store_true', default = False, help='an integer for the accumulator')
 parser.add_argument('--after', default = None, help='Make this batch of jobs depend on the job id given')
 parser.add_argument('--chain-exts', default = None, help='Overide the chain_exts given in the script')
+parser.add_argument('--indices', default = None, help='Overide the job indices, normally theyre 0-9 if you have 10 tasks')
 args = Munch(vars(parser.parse_args()))
 print(args)
     
@@ -68,7 +69,10 @@ if args.chain_exts != None:
     batch_params.chain_exts = eval(args.chain_exts)
     print(f'Overiding batch_params.chain_exts to {batch_params.chain_exts}')
     
-
+if args.indices == None:
+    args.indices = (0, batch_params.total_jobs)
+    print(f'No indices specified so using {(0, batch_params.total_jobs)}')
+    
 ### make the job which gives access to some platform specific info like paths and such
 #if args.debug: 
 #    print('Debug mode: only doing 1 chain extension')
@@ -76,10 +80,9 @@ if args.chain_exts != None:
                     
 jobs = [None for _ in batch_params.chain_exts]
 for j,i in enumerate(batch_params.chain_exts):
-    indices = (0, batch_params.total_jobs)
-    print(f'Starting job with indices={indices} chain={i}')
+    print(f'Starting job with indices={args.indices} chain={i}')
     this_job_name = f"{job_name[:11]}_{i}"
-    jobs[j] = JobClass(py_script, this_job_name, job_folder_name, indices,
+    jobs[j] = JobClass(py_script, this_job_name, job_folder_name, args.indices,
                        chain_id = i,
                        startafter = jobs[j - 1] if j > 0 else args.after,
                        debug = args.debug,

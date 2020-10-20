@@ -739,3 +739,132 @@
        2.88571429, 2.96530612, 3.04489796, 3.1244898 , 3.20408163,
        3.28367347, 3.36326531, 3.44285714, 3.52244898, 3.60204082,
        3.68163265, 3.76122449, 3.84081633, 3.92040816, 4.        ])], 'indices': (0, 10000)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/TU_phase_diagram3 2020-09-07T14:01:55.781974 Munch({'total_jobs': 6400, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3]), array([0.        , 0.20512821, 0.41025641, 0.61538462, 0.82051282,
+       1.02564103, 1.23076923, 1.43589744, 1.64102564, 1.84615385,
+       2.05128205, 2.25641026, 2.46153846, 2.66666667, 2.87179487,
+       3.07692308, 3.28205128, 3.48717949, 3.69230769, 3.8974359 ,
+       4.1025641 , 4.30769231, 4.51282051, 4.71794872, 4.92307692,
+       5.12820513, 5.33333333, 5.53846154, 5.74358974, 5.94871795,
+       6.15384615, 6.35897436, 6.56410256, 6.76923077, 6.97435897,
+       7.17948718, 7.38461538, 7.58974359, 7.79487179, 8.        ]), array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2, 1.3,
+       1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2. , 2.1, 2.2, 2.3, 2.4, 2.5, 2.6,
+       2.7, 2.8, 2.9, 3. , 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
+       4. ])], 'indices': (0, 6400)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/TU_phase_diagram3 2020-09-07T14:03:38.389547 Munch({'total_jobs': 6400, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3]), array([0.        , 0.20512821, 0.41025641, 0.61538462, 0.82051282,
+       1.02564103, 1.23076923, 1.43589744, 1.64102564, 1.84615385,
+       2.05128205, 2.25641026, 2.46153846, 2.66666667, 2.87179487,
+       3.07692308, 3.28205128, 3.48717949, 3.69230769, 3.8974359 ,
+       4.1025641 , 4.30769231, 4.51282051, 4.71794872, 4.92307692,
+       5.12820513, 5.33333333, 5.53846154, 5.74358974, 5.94871795,
+       6.15384615, 6.35897436, 6.56410256, 6.76923077, 6.97435897,
+       7.17948718, 7.38461538, 7.58974359, 7.79487179, 8.        ]), array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2, 1.3,
+       1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2. , 2.1, 2.2, 2.3, 2.4, 2.5, 2.6,
+       2.7, 2.8, 2.9, 3. , 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
+       4. ])], 'indices': (0, 6400)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-08T14:37:34.135516 Munch({'total_jobs': 500, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TJ_critical_line 2020-09-08T14:38:43.586751 Munch({'total_jobs': 500, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Js', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([ 0.        ,  1.11111111,  2.22222222,  3.33333333,  4.44444444,
+        5.55555556,  6.66666667,  7.77777778,  8.88888889, 10.        ]), array([-1.        , -0.77777778, -0.55555556, -0.33333333, -0.11111111,
+        0.11111111,  0.33333333,  0.55555556,  0.77777778,  1.        ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_gapped_TU_critical_line 2020-09-08T14:39:58.732296 Munch({'total_jobs': 1000, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([3.5       , 3.55263158, 3.60526316, 3.65789474, 3.71052632,
+       3.76315789, 3.81578947, 3.86842105, 3.92105263, 3.97368421,
+       4.02631579, 4.07894737, 4.13157895, 4.18421053, 4.23684211,
+       4.28947368, 4.34210526, 4.39473684, 4.44736842, 4.5       ]), array([3.        , 3.22222222, 3.44444444, 3.66666667, 3.88888889,
+       4.11111111, 4.33333333, 4.55555556, 4.77777778, 5.        ])], 'indices': (0, 1000)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TJ_critical_line 2020-09-09T10:17:49.846554 Munch({'total_jobs': 500, 'chain_exts': range(5, 10), 'structure_names': ['Rs', 'Js', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([ 0.        ,  1.11111111,  2.22222222,  3.33333333,  4.44444444,
+        5.55555556,  6.66666667,  7.77777778,  8.88888889, 10.        ]), array([-1.        , -0.77777778, -0.55555556, -0.33333333, -0.11111111,
+        0.11111111,  0.33333333,  0.55555556,  0.77777778,  1.        ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TJ_critical_line 2020-09-09T10:21:01.146809 Munch({'total_jobs': 500, 'chain_exts': range(5, 10), 'structure_names': ['Rs', 'Js', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([ 0.        ,  1.11111111,  2.22222222,  3.33333333,  4.44444444,
+        5.55555556,  6.66666667,  7.77777778,  8.88888889, 10.        ]), array([-1.        , -0.77777778, -0.55555556, -0.33333333, -0.11111111,
+        0.11111111,  0.33333333,  0.55555556,  0.77777778,  1.        ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-09T11:14:02.043916 Munch({'total_jobs': 500, 'chain_exts': range(5, 20), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_gapped_TU_critical_line 2020-09-09T15:06:31.070092 Munch({'total_jobs': 1000, 'chain_exts': range(5, 10), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([3.5       , 3.55263158, 3.60526316, 3.65789474, 3.71052632,
+       3.76315789, 3.81578947, 3.86842105, 3.92105263, 3.97368421,
+       4.02631579, 4.07894737, 4.13157895, 4.18421053, 4.23684211,
+       4.28947368, 4.34210526, 4.39473684, 4.44736842, 4.5       ]), array([3.        , 3.22222222, 3.44444444, 3.66666667, 3.88888889,
+       4.11111111, 4.33333333, 4.55555556, 4.77777778, 5.        ])], 'indices': (0, 1000)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-14T14:31:18.766043 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-14T14:32:28.255306 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-14T14:32:55.423018 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-14T14:33:22.297638 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-14T14:37:15.193726 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-14T14:38:06.387820 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TJ_critical_line 2020-09-14T15:06:16.458626 Munch({'total_jobs': 500, 'chain_exts': range(0, 10), 'structure_names': ['Rs', 'Js', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([ 0.        ,  1.11111111,  2.22222222,  3.33333333,  4.44444444,
+        5.55555556,  6.66666667,  7.77777778,  8.88888889, 10.        ]), array([-1.        , -0.77777778, -0.55555556, -0.33333333, -0.11111111,
+        0.11111111,  0.33333333,  0.55555556,  0.77777778,  1.        ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TJ_critical_line 2020-09-14T15:17:13.394063 Munch({'total_jobs': 500, 'chain_exts': range(10, 30), 'structure_names': ['Rs', 'Js', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([ 0.        ,  1.11111111,  2.22222222,  3.33333333,  4.44444444,
+        5.55555556,  6.66666667,  7.77777778,  8.88888889, 10.        ]), array([-1.        , -0.77777778, -0.55555556, -0.33333333, -0.11111111,
+        0.11111111,  0.33333333,  0.55555556,  0.77777778,  1.        ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TU_critical_line 2020-09-14T16:00:57.555553 Munch({'total_jobs': 500, 'chain_exts': range(20, 40), 'structure_names': ['Rs', 'Us', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.        , 0.88888889, 1.77777778, 2.66666667, 3.55555556,
+       4.44444444, 5.33333333, 6.22222222, 7.11111111, 8.        ]), array([1.25      , 1.47222222, 1.69444444, 1.91666667, 2.13888889,
+       2.36111111, 2.58333333, 2.80555556, 3.02777778, 3.25      ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TJ_critical_line 2020-09-16T13:32:28.192823 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Js', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([ 0.        ,  1.11111111,  2.22222222,  3.33333333,  4.44444444,
+        5.55555556,  6.66666667,  7.77777778,  8.88888889, 10.        ]), array([-1.        , -0.77777778, -0.55555556, -0.33333333, -0.11111111,
+        0.11111111,  0.33333333,  0.55555556,  0.77777778,  1.        ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TJ_critical_line 2020-09-16T13:32:43.427709 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Js', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([ 0.        ,  1.11111111,  2.22222222,  3.33333333,  4.44444444,
+        5.55555556,  6.66666667,  7.77777778,  8.88888889, 10.        ]), array([-1.        , -0.77777778, -0.55555556, -0.33333333, -0.11111111,
+        0.11111111,  0.33333333,  0.55555556,  0.77777778,  1.        ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/cdw_TJ_critical_line 2020-09-16T13:32:50.142810 Munch({'total_jobs': 500, 'chain_exts': range(0, 20), 'structure_names': ['Rs', 'Js', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([ 0.        ,  1.11111111,  2.22222222,  3.33333333,  4.44444444,
+        5.55555556,  6.66666667,  7.77777778,  8.88888889, 10.        ]), array([-1.        , -0.77777778, -0.55555556, -0.33333333, -0.11111111,
+        0.11111111,  0.33333333,  0.55555556,  0.77777778,  1.        ])], 'indices': (0, 500)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_open_U=2 2020-09-23T17:49:10.781419 Munch({'total_jobs': 250, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2, 1.3,
+       1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2. , 2.1, 2.2, 2.3, 2.4, 2.5, 2.6,
+       2.7, 2.8, 2.9, 3. , 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
+       4. , 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5. ])], 'indices': (0, 250)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_opening_U=2_low_temp 2020-09-28T11:33:35.456801 Munch({'total_jobs': 50, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. ])], 'indices': (0, 50)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_opening_U=2 2020-09-28T11:35:56.864472 Munch({'total_jobs': 250, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2, 1.3,
+       1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2. , 2.1, 2.2, 2.3, 2.4, 2.5, 2.6,
+       2.7, 2.8, 2.9, 3. , 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
+       4. , 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5. ])], 'indices': (0, 250)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_opening_U=2 2020-09-28T11:38:21.882475 Munch({'total_jobs': 250, 'chain_exts': range(2, 5), 'structure_names': ['Rs', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2, 1.3,
+       1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2. , 2.1, 2.2, 2.3, 2.4, 2.5, 2.6,
+       2.7, 2.8, 2.9, 3. , 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
+       4. , 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5. ])], 'indices': (0, 250)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_opening_U=2_low_temp2 2020-10-16T13:35:47.787546 Munch({'total_jobs': 25, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([0.1, 0.2, 0.3, 0.4, 0.5])], 'indices': (0, 25)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_opening_logarithmic 2020-10-19T15:00:44.185979 Munch({'total_jobs': 35, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([  3.2       ,   5.67925866,  10.0793684 ,  17.88854382,
+        31.74802104,  56.34538228, 100.        ])], 'indices': (0, 35)})
+
+## data/slurm_runs//rds/general/user/tch14/home/HPC_data/gap_opening_logarithmic 2020-10-20T09:43:20.725947 Munch({'total_jobs': 35, 'chain_exts': array([0, 1, 2, 3, 4]), 'structure_names': ['Rs', 'Ts'], 'structure_dimensions': [array([0, 1, 2, 3, 4]), array([  3.2       ,   5.67925866,  10.0793684 ,  17.88854382,
+        31.74802104,  56.34538228, 100.        ])], 'indices': (0, 35)})
