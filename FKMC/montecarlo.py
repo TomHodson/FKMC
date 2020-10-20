@@ -4,6 +4,7 @@ from .general import interaction_matrix, solve_H, convert_to_central_moments, in
 from scipy.linalg import eigh_tridiagonal, LinAlgError, circulant
 import scipy
 from time import time
+import cachetools
 
 
 ### proposal functions #######################################################################################################################################################
@@ -12,6 +13,15 @@ def p_single_random_site(j, N_sites, **kwargs): return [np.random.randint(N_site
 def p_multi_site_fixed(multi, **kwargs): return lambda k, N_sites:  np.random.randint(N_sites, size = multi)
 def p_multi_site_uniform(j, N_sites, **kwargs): return np.random.randint(N_sites, size = np.random.randint(1,N_sites))
 def p_uncorrelated_proposal(j, N_sites, **kwargs): return np.nonzero(np.random.choice([0,1], size = N_sites))[0]
+
+def p_one_or_two_reflect(j, N_sites, **kwargs):
+    p_reflect = 1/N_sites
+    reflect = p_reflect > np.random.rand() #whether or not we're gonna reflect the whole state this time
+    if reflect:
+        return np.arange(N_sites) #flip all the sites
+    else:
+        n_sites = np.random.randint(1,3)
+        return np.random.randint(low=0, high=N_sites, size=n_sites, dtype=np.int)
 
 def p_multi_site_uniform_reflect(j, N_sites, **kwargs):
     p_reflect = 1/N_sites
@@ -55,9 +65,25 @@ def simple_accept(state, sites, logger, current_Ff, current_Fc, parameters):
     else:
         return False, current_Ff, current_Fc
 
-#implements perturbation mcmc staving off having to calculat the determinant every time
-def Ff(state, U, mu, J_matrix, **kwargs): return - U/2*np.sum(state - 1/2) - mu*np.sum(state) + (state - 1/2).T @ J_matrix @ (state - 1/2)
-def diagonalise(state, U, mu, t, **kwargs): return eigh_tridiagonal(d = U*(state - 1/2) - mu, e =-t*np.ones(state.shape[0] - 1), lapack_driver = 'stev')
+def FKhash(state, **params):
+    return hash((state.tobytes(), state.size, (v for k,v in params.items() if k in ['t', 'mu', 'alpha', 'U', 'J', 'beta'])))
+ 
+#implements perturbation mcmc staving off having to calculate the determinant every time
+@cachetools.cached(cachetools.LFUCache(maxsize=int(1e3)), key = FKhash)
+def Ff(state, U, mu, J_matrix, **kwargs): 
+    return - U/2*np.sum(state - 1/2) - mu*np.sum(state) + (state - 1/2).T @ J_matrix @ (state - 1/2)
+
+@cachetools.cached(cachetools.LFUCache(maxsize=int(1e3)), key = FKhash)
+def solve_H(state, mu, beta, U, J_matrix, t, J, alpha, **kwargs):
+    state = np.array(state)
+    muf = muc = mu
+    
+    #This is already cached, add J and alpha as arguments because they define J_matrix for caching purposes
+    _Ff = Ff(state, U=U, mu=mu, J_matrix=J_matrix, J=J, alpha=alpha)
+    evals, evecs = eigh_tridiagonal(d = U*(state - 1/2) - mu, e =-t*np.ones(state.shape[0] - 1), lapack_driver = 'stev')
+    Fc = - 1/beta * np.sum(np.log(1 + np.exp(- beta * evals)))
+    return _Ff, Fc, evals, evecs
+
 
 def perturbation_accept(state, sites, logger, current_Ff, current_Fc, parameters):
     
@@ -67,8 +93,7 @@ def perturbation_accept(state, sites, logger, current_Ff, current_Fc, parameters
     beta = parameters['beta']
     if dFf < 0 or exp(- beta * dFf) > np.random.rand():
         logger.classical_accept_rates[len(sites)] += 1
-        evals, evecs = diagonalise(state, **parameters)
-        new_Fc = - 1/beta * np.sum(np.log(1 + np.exp(- beta * evals)))
+        new_Ff, new_Fc, evals, evecs = solve_H(state, **parameters)
         dFc = new_Fc - current_Fc
         
         if dFc < 0 or exp(- beta * dFc) > np.random.rand():
@@ -126,7 +151,7 @@ def FK_mcmc(
                 
     
         if i >= N_burn_in and i % thin == 0:
-            current_Ff, current_Fc, evals, evecs = solve_H(state=state, **parameters)
+            current_Ff, current_Fc, evals, evecs = solve_H(state, **parameters)
             j = (i - N_burn_in) // thin
             logger.update(j, current_Ff, current_Fc, state, evals, evecs, **parameters)
     
