@@ -257,7 +257,7 @@ def compute_IPR_and_DOS_histograms(raw_eigenvals, raw_IPRs, E_bins, bootstrap_bi
         IPR = <sum_IPR> / <sum_DOS>
         DOS = sum_DOS / energy_bin_width / system_size
     
-    5) smooth out the spikieness of the resulting histogram using\
+    5) smooth out the spikieness of the resulting histogram using smooth
     
     Crucially the mean is taken before the ratio, doing it the other way doesn't seem to work.
     '''
