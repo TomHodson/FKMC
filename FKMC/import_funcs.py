@@ -430,7 +430,7 @@ def get_data_funcmap(this_run,
         Total: {timefmt(np.nansum(o.time))}
     """[1:]
     logger.info(infostring)
-    update_description(this_run.stem, infostring)
+    #update_description(this_run.stem, infostring)
     
     return observables
 
