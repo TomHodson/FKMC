@@ -467,7 +467,7 @@ def datafile_load(f):
         return None
     
     #check that the final N is present in the file
-    if d is None:
+    if d is None or d[-1] is None:
         logger.debug(f'{f} is only partially finished.')
         return None
     
@@ -576,12 +576,21 @@ def get_data_funcmap_chain_ext(this_run,
     
     
     o.N_tasks = product(o.structure_dims)
-    o.N_chains = min(max(c) for c in chain_ids.values()) + 1
+    o.chains = [max(c) + 1 for c in chain_ids.values()]
+    o.N_chains = max(o.chains)
     
-    logger.debug(f'Expected number of tasks {o.N_tasks}')
-    logger.debug(f'Measured number of tasks {len(task_ids)}')
-    logger.debug(f'Expected number of chains {chain_length}')
-    logger.debug(f'Measured number of chains {o.N_chains}')
+    logger.debug(f'Missing jobs, should all be up to {max(o.chains)-1}')
+    logger.debug(f'task_id: chain_ids')
+    for task_id, chain_ids in chain_ids.items():
+        if len(chain_ids) < o.N_chains: 
+            logger.debug(f'{task_id}: {chain_ids}')
+    
+    logger.info(f'Expected number of tasks {o.N_tasks}')
+    logger.info(f'Measured number of tasks {len(task_ids)}')
+    logger.info(f'Expected number of chains {chain_length}')
+    logger.info(f'Shortest Chain {min(o.chains)}')
+    logger.info(f'Longest Chain {max(o.chains)}')
+    logger.info(f'Using chain length {o.N_chains}')
     if chain_length is not None: o.N_chains = chain_length
     
     o.functions += [extract('time'), 
@@ -708,4 +717,37 @@ def incremental_get_data_funcmap_chain_ext(o,
     """[1:]
     logger.info(infostring)
     
+    return o
+
+import pickle
+import shutil
+
+def incremental_load(folder, functions, force_reload = False):
+    folder = Path(folder).expanduser()
+    load_filepath = folder / 'loaded_data.pickle'
+    logging.basicConfig()
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    
+    if force_reload or not load_filepath.exists():
+
+
+        o = get_data_funcmap_chain_ext(folder, functions = functions)
+
+    else: #we know the file exists and we're not forcing a reload
+        with open(load_filepath, 'rb') as file:
+            o = pickle.load(file)
+
+        incremental_get_data_funcmap_chain_ext(o, functions = functions)
+
+    if load_filepath.exists(): shutil.copy(load_filepath, folder / 'loaded_data.pickle.backup')
+
+    #save it whatever process we went through
+    try:
+        with open(load_filepath, 'wb') as file:
+            if 'functions' in o: del o['functions']
+            pickle.dump(o, file)
+    except:
+        pass
+        
     return o
