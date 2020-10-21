@@ -23,3 +23,7 @@ colors10 = list(map(to_rgba, """
 #ffb941
 #ffd547
 """.strip().split('\n'))) #https://learnui.design/tools/data-color-picker.html#palette
+
+#make a colormap from the colors
+from matplotlib.colors import LinearSegmentedColormap
+custom_cmap = LinearSegmentedColormap.from_list("mycmap", colors)
