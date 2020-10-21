@@ -87,7 +87,6 @@ def solve_H(state, mu, beta, U, J_matrix, t, J, alpha, **kwargs):
 
 
 def perturbation_accept(state, sites, logger, current_Ff, current_Fc, parameters, rng, cache):
-    
     new_Ff = Ff(state, **parameters)
     dFf = new_Ff - current_Ff
 
@@ -95,13 +94,7 @@ def perturbation_accept(state, sites, logger, current_Ff, current_Fc, parameters
     #print(f"{exp(- beta * dFf):.3g}")
     if dFf < 0 or exp(- beta * dFf) > rng.random():
         logger.classical_accept_rates[len(sites)] += 1
-        try: 
-           evals, evecs = cache[tuple(state)]
-        except KeyError:
-            evals, evecs = diagonalise(state, **parameters)
-            cache[tuple(state)] = (evals, evecs)
-            
-        new_Fc = - 1/beta * np.sum(np.log(1 + np.exp(- beta * evals)))
+        new_Ff, new_Fc, evals, evecs = solve_H(state, **parameters)
         dFc = new_Fc - current_Fc
         
         if dFc < 0 or exp(- beta * dFc) > rng.random():
