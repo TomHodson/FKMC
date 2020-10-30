@@ -547,7 +547,12 @@ def get_data_funcmap_chain_ext(this_run,
     if task_id_range is not None: o.task_id_range = task_id_range
     
     o.this_run = this_run.expanduser()
-    logger.info(f'looking in {o.this_run}')
+    if o.this_run.exists():
+        logger.info(f'looking in {o.this_run}')
+    else: 
+        logger.info(f'{o.this_run} does not exist, quiting.')
+        return
+        
     o.datapath = o.this_run / 'data'
     o.codepath = o.this_run / 'code'
     
@@ -751,3 +756,26 @@ def incremental_load(folder, functions, force_reload = False):
         pass
         
     return o
+
+
+from FKMC.general import smooth, spread
+from scipy.stats import sem
+
+def interpolate_IPR(E_bins, unsmoothed_DOS, IPR, dIPR):
+    newshape = (IPR.size // IPR.shape[-1], IPR.shape[-1])
+    _DOS = unsmoothed_DOS.reshape(newshape)
+    _IPR = IPR.reshape(newshape)
+    _dIPR = dIPR.reshape(newshape)
+    
+    for i, DOS, I, dI in zip(count(), _DOS, _IPR, _dIPR):
+        ei = DOS > 0
+        if any(ei):
+            _I = I[ei]
+            _dI = dI[ei]
+            xI = E_bins[1:][ei]
+
+            _IPR[i] = np.interp(E_bins[1:], xI, _I)
+            _dIPR[i] = np.interp(E_bins[1:], xI, _dI)
+        else:
+            _IPR[i] = E_bins[1:] * np.NaN
+            _dIPR[i] = E_bins[1:] * np.NaN
