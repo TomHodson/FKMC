@@ -131,7 +131,44 @@ class ProgressReporter(object):
             logger.info(f'\nTook {dt:.2f}s to do the first {j}, should take {(N-j)*dt/j:.2f}s to do the remaining {N-j}\n')
         if j % self.dot_batch == 0: print(f'{j} ', end='')
             
+class extractStates(object):
+    def __init__(self):
+        self.obsname = 'state'
+    
+    def allocate(self, observables, example_datafile, N_jobs):
+        logs = example_datafile.logs[0]
+        Ns = example_datafile.Ns
+        data = np.array(getattr(logs, self.obsname))
+        data_shape = list(np.shape(data))
+        hint = shape_hints(self.obsname)
+        #the shape is (observables.max_MC_step, N)
+            
+        #use a list to store the differently shaped arrays
+        shape = (N_jobs, observables.max_MC_step)
+        observables.flat[self.obsname] = [
+            np.full(shape=(N_jobs, observables.max_MC_step, N), 
+                    fill_value = np.nan, 
+                    dtype = data.dtype)
+                for N in Ns]
+        approx_size = 4*product(shape)*len(Ns) #assumes 64bit floats
+        assert(approx_size < 1e9) #try not to use more than 1Gb per allocation
+        logger.debug(f"observables.flat['{self.obsname}'] = [np.array(shape = (N_jobs, observables.max_MC_step, N), dtype = {data.dtype})] approx size: {approx_size/1e9:.2f}Gb")
 
+
+    def copy(self, observables, j, datafile):
+        for i in range(len(observables.Ns)):
+            if datafile[i] == None: continue #fail gracefully on partially computed results
+            observables.flat[self.obsname][i][j] = getattr(datafile[i], self.obsname)
+                
+              
+    def reshape(self, structure_dims, observables):
+        o = observables.flat[self.obsname]
+        
+        observables[self.obsname] = [
+            o[i].reshape(structure_dims + (observables.max_MC_step, N))
+            for i,N in enumerate(observables.Ns)]
+
+        observables.hints[self.obsname] = ('Ns',) + tuple(observables.structure_names) + ('MCMC_step','N')
 
 class extract(object):
     def __init__(self, obsname):
@@ -141,7 +178,6 @@ class extract(object):
         logs = example_datafile.logs[0]
         Ns = example_datafile.Ns
         data = np.array(getattr(logs, self.obsname)) #adding the np.array(...) makes it work for bare floats
-
         shape = (len(Ns), N_jobs) + np.shape(data) #this works even is data is a float
         observables.flat[self.obsname] = np.full(shape=shape, fill_value = np.nan, dtype = data.dtype)
         approx_size = 4*product(shape) #assumes 64bit floats
@@ -477,7 +513,7 @@ def datafile_load(f):
 def datafile_concat(datafiles, Ns):
     #datafiles is a list of lists where the outer is chain_ext and inner is Ns
     datafile = [Munch() for _ in Ns]
-    names = ['IPRs', 'eigenvals', 'Mf_moments', 'eigenval_bins', 'time', 'accept_rates', 'proposal_rates']
+    names = ['IPRs', 'eigenvals', 'Mf_moments', 'eigenval_bins', 'time', 'accept_rates', 'proposal_rates', 'state']
     
     for name in names:
         if not hasattr(datafiles[0][0], name): continue
@@ -567,7 +603,7 @@ def get_data_funcmap_chain_ext(this_run,
     logger.debug(f'structure_names = {o.structure_names}')
     logger.debug(f'structure_dims = {o.structure_dims}')
     
-    #calculate the epected number of jobs
+    #calculate the expected number of jobs
     def name2id(n): return tuple(map(int,n.split('_')))
     
     datafiles = dict()
@@ -611,12 +647,13 @@ def get_data_funcmap_chain_ext(this_run,
     parameters = d['parameters'][()]
     MCMC_params = d['MCMC_params'][()]
     
-    logger.info(f'Logger keys: {list(d.keys())} \n')
+    logger.info(f'Logger keys: {dir(d.logs[0])} \n')
     logger.info(f"MCMC_params keys: {list(MCMC_params.keys())} \n")
     
     o.original_N_steps = MCMC_params['N_steps']
     o.thin = MCMC_params['thin']
     o.N_steps = o.original_N_steps // o.thin
+    o.max_MC_step = o.N_steps * o.N_chains
     
     logger.info(f'Overall steps = {o.N_steps * o.N_chains}')
     
@@ -727,16 +764,14 @@ def incremental_get_data_funcmap_chain_ext(o,
 import pickle
 import shutil
 
-def incremental_load(folder, functions, force_reload = False):
+def incremental_load(folder, functions, force_reload = False, loglevel = logging.DEBUG):
     folder = Path(folder).expanduser()
     load_filepath = folder / 'loaded_data.pickle'
     logging.basicConfig()
     logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(loglevel)
     
     if force_reload or not load_filepath.exists():
-
-
         o = get_data_funcmap_chain_ext(folder, functions = functions)
 
     else: #we know the file exists and we're not forcing a reload
