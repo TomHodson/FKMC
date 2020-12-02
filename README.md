@@ -25,6 +25,11 @@ Install the FKMC package
     ```sh
     pip install --editable .
     ```
+   
+1. (Optional) Install a git filter to prevent cell output from showing up underversion control
+    ```ssh
+    nbstripout --install
+    ```
     
 ## Use
 A typical use would be to:
