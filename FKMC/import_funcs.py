@@ -168,7 +168,7 @@ class extractStates(object):
             o[i].reshape(structure_dims + (observables.max_MC_step, N))
             for i,N in enumerate(observables.Ns)]
 
-        observables.hints[self.obsname] = ('Ns',) + tuple(observables.structure_names) + ('MCMC_step','N')
+        observables.hints[self.obsname] = ('[Ns]',) + tuple(observables.structure_names) + ('MCMC_step','N')
 
 class extract(object):
     def __init__(self, obsname):
@@ -764,7 +764,10 @@ def incremental_get_data_funcmap_chain_ext(o,
 import pickle
 import shutil
 
-def incremental_load(folder, functions, force_reload = False, loglevel = logging.DEBUG):
+def incremental_load(folder, functions, 
+                     force_reload = False, 
+                     force_to_use_pickled = False,
+                     loglevel = logging.DEBUG):
     folder = Path(folder).expanduser()
     load_filepath = folder / 'loaded_data.pickle'
     logging.basicConfig()
@@ -777,6 +780,8 @@ def incremental_load(folder, functions, force_reload = False, loglevel = logging
     else: #we know the file exists and we're not forcing a reload
         with open(load_filepath, 'rb') as file:
             o = pickle.load(file)
+            if force_to_use_pickled: 
+                return o
 
         incremental_get_data_funcmap_chain_ext(o, functions = functions)
 
