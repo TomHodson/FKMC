@@ -1,0 +1,27 @@
+# matplotlib custom stylesheet, with all values available from a stylesheet.
+
+## Font properties
+font.family:  sans-serif
+
+## Figure properties
+figure.figsize:          3.404, 3.404 # figure size in inches: width by height
+figure.dpi:              200 #makes the figures display larger on high dpi displays
+savefig.pad_inches:      0.1
+
+# Text properties
+text.color:          k
+text.usetex:         False
+
+xtick.labelsize:   8
+xtick.direction:   in
+xtick.bottom:      True
+xtick.top:         True
+
+ytick.labelsize:   8
+ytick.direction:   in
+ytick.left:        True
+ytick.right:       True
+
+axes.labelsize:     8
+
+figure.autolayout: False
