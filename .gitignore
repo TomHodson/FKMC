@@ -6,7 +6,7 @@
 
 #hidden files
 .*
-batchscripts/pure_python/
+pure_python/
 
 #cython generated files
 *.c
