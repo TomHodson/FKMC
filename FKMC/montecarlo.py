@@ -13,7 +13,27 @@ def p_single_typewriter(j, N_sites, **kwargs): return [j%N_sites,]
 def p_single_random_site(j, N_sites, **kwargs): return [np.random.randint(N_sites),]
 def p_multi_site_fixed(multi, **kwargs): return lambda k, N_sites:  np.random.randint(N_sites, size = multi)
 def p_multi_site_uniform(j, N_sites, **kwargs): return np.random.randint(N_sites, size = np.random.randint(1,N_sites))
-def p_uncorrelated_proposal(j, N_sites, **kwargs): return np.nonzero(np.random.choice([0,1], size = N_sites))[0]
+
+def p_uncorrelated_proposal(j, N_sites, rng, **kwargs): 
+    return np.nonzero(rng.choice([0,1], size = N_sites))[0]
+
+def p_one(j, N_sites, rng, **kwargs):
+    return rng.integers(low=0, high=N_sites, size=1, dtype=int)
+
+def p_two(j, N_sites, rng, **kwargs):
+    return rng.integers(low=0, high=N_sites, size=2, dtype=int)
+
+def p_one_or_two(j, N_sites, rng, **kwargs):
+    n_sites = rng.integers(1,3)
+    return rng.integers(low=0, high=N_sites, size=n_sites, dtype=int)
+
+def p_one_to_N(j, N_sites, rng, **kwargs):
+    n_sites = rng.integers(1, N_sites)
+    return rng.integers(low=0, high=N_sites, size=n_sites, dtype=int)
+
+def p_poisson(j, N_sites, rng, lam=1, **kwargs):
+    n_sites = min(rng.poisson(lam = lam), N_sites-1)
+    return rng.integers(low=0, high=N_sites, size=n_sites, dtype=int)
 
 def p_one_or_two_reflect(j, N_sites, **kwargs):
     p_reflect = 1/N_sites
