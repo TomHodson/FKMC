@@ -380,6 +380,24 @@ def tridiagonal_diagonalisation_benchmark(M = 100, N = 250):
         
     return time() - t
 
+def interpolate_IPR(E_bins, unsmoothed_DOS, IPR, dIPR):
+    newshape = (IPR.size // IPR.shape[-1], IPR.shape[-1])
+    _DOS = unsmoothed_DOS.reshape(newshape)
+    _IPR = IPR.reshape(newshape)
+    _dIPR = dIPR.reshape(newshape)
+    
+    for i, DOS, I, dI in zip(count(), _DOS, _IPR, _dIPR):
+        ei = DOS > 0
+        if any(ei):
+            _I = I[ei]
+            _dI = dI[ei]
+            xI = E_bins[1:][ei]
+
+            _IPR[i] = np.interp(E_bins[1:], xI, _I)
+            _dIPR[i] = np.interp(E_bins[1:], xI, _dI)
+        else:
+            _IPR[i] = E_bins[1:] * np.NaN
+            _dIPR[i] = E_bins[1:] * np.NaN
 
 """
 Retired code left here just in case I find a reference to it and have forgotten what it did.
