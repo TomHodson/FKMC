@@ -1,5 +1,7 @@
 # Long-Range Falikov Kimball Model in One Dimension: Phase Transition, Disorder-Free Localisation and Delocalisation
 
+[![DOI](https://zenodo.org/badge/174118363.svg)](https://zenodo.org/badge/latestdoi/174118363)
+
 This repository contains code to perform Markov Chain Monte Carlo (MCMC) simulations of a 1D tight binding model with a mixture of classical and quantum degrees of freedom. The strategy used is to perform an MCMC walk over the classical configurations of the system, diagonalising the quantum hamiltionian at each step. Includes code for submission to cluster systems and analysis of the results, such as computing an energy-resolved Inverse Participation Ratio.
 
 ## Installation
