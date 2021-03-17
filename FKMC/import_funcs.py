@@ -602,7 +602,7 @@ def get_data_funcmap_chain_ext(this_run,
     context = execute_script(o.py_script)
     o.batch_params = Munch(context.batch_params)
     o.structure_names = o.batch_params.structure_names
-    o.structure_dims = tuple(d.size for d in o.batch_params.structure_dimensions)
+    o.structure_dims = tuple(np.array(d).size for d in o.batch_params.structure_dimensions)
     
     logger.debug(f'structure_names = {o.structure_names}')
     logger.debug(f'structure_dims = {o.structure_dims}')
