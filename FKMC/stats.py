@@ -77,6 +77,7 @@ def spin_spin_correlation(state):
 
 ###Correlation related functions
 def autocorrelation(X):
+    "(<xy> - <x><y>)/(<xx> - <x><x>)"
     N = X.shape[0]
     lagged = scipy.signal.correlate(X, X, mode = 'full') / (N - np.abs(np.arange(1,2*N)-N))
     full = (lagged - np.mean(X)**2 ) / (np.mean(X**2) - np.mean(X)**2)
