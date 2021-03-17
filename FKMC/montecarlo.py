@@ -76,7 +76,7 @@ def p_multi_site_variable_reflect_exponential(j, N_sites, rng, scale = 1, **kwar
     
 
 ### Acceptance functions #######################################################################################################################################################
-def simple_accept(state, sites, logger, current_Ff, current_Fc, parameters, rng):
+def simple_accept(state, sites, logger, current_Ff, current_Fc, parameters, rng, cache):
     new_Ff, new_Fc, evals, evecs = solve_H(state=state, **parameters)
     dF = (new_Ff + new_Fc) - (current_Ff + current_Fc)
     
@@ -127,7 +127,7 @@ from collections import Counter
 ### Actual Algorithm #######################################################################################################################################################
 def FK_mcmc(
     state = None, proposal = None, proposal_args = dict(), accept_function = None, parameters = dict(mu=0, beta=1, alpha=1.5, J=1, U=1, t=1, normalise = True),            
-    N_steps = 100, N_burn_in = 10, thin = 1, logger = None, warnings = True, info = False, rng = None, raw_steps = False, **kwargs,
+    N_steps = 100, N_burn_in = 10, thin = 1, logger = None, warnings = True, info = False, rng = None, raw_steps = False, batch_info = True, **kwargs,
     ):
     assert(N_steps % thin == 0)
     if isinstance(state, np.ndarray):
@@ -146,14 +146,14 @@ def FK_mcmc(
     t0 = time()
     parameters.update(J_matrix = interaction_matrix(N_sites, dtype = np.float64, **parameters))
     current_Ff, current_Fc, evals, evecs = solve_H(state=state, **parameters)
-    if logger == None: logger = DataLogger()
+    if logger == None: logger = Eigenspectrum_IPR_all()
     logger.start(N_steps // thin, N_sites)
     logger.accept_rates, logger.proposal_rates, logger.classical_accept_rates = np.zeros(shape = (N_sites+1,3)).T
     cache = dict()
     
     update_batch = max(1 ,(N_steps + N_burn_in) // 10)
     for i in range(N_steps + N_burn_in):
-        if (i%update_batch == 0):
+        if (batch_info and i%update_batch == 0):
             c_r = (np.sum(logger.classical_accept_rates) / max(1, np.sum(logger.proposal_rates)))
             q_r = np.sum(logger.accept_rates) / max(1, np.sum(logger.classical_accept_rates))
             o_r = np.sum(logger.accept_rates) / max(1, np.sum(logger.proposal_rates))
@@ -210,6 +210,114 @@ def FK_mcmc(
     #print(f'acceptance probability: {accepted / N_sites / (N_steps + N_burn_in)}, mu = {mu}')
     return logger.return_vals()
 
+def rejection_sample_q(state, rng, parameters, proposal, proposal_args):
+    current_Ff = Ff(state, **parameters)
+    state = state.copy()
+    
+    beta = parameters['beta']
+    for attempts in range(10000):
+        sites = proposal(0, len(state), rng, **proposal_args)
+        state[sites] = 1 - state[sites]
+        new_Ff = Ff(state, **parameters)
+        dFf = new_Ff - current_Ff
+
+        #if this passes we break out the loop and state has been chosen according the q(a -> b)
+        if dFf < 0 or rng.random() < min(1, exp(- beta * dFf)):
+            return state
+        else:
+            state[sites] = 1 - state[sites]
+    else:
+        raise ValueError("Couldn't find a proposed state after many attempts")
+
+def FK_mcmc_MH(
+    state = None, proposal = None, proposal_args = dict(), accept_function = None, parameters = dict(mu=0, beta=1, alpha=1.5, J=1, U=1, t=1, normalise = True),            
+    N_steps = 100, N_burn_in = 10, thin = 1, logger = None, warnings = True, info = False, rng = None, raw_steps = False, batch_info = True, **kwargs,
+    ):
+    assert(N_steps % thin == 0)
+    if isinstance(state, np.ndarray):
+        N_sites = state.shape[0]
+    elif 'N_sites' in parameters:
+        N_sites = parameters['N_sites']
+        state = np.arange(N_sites, dtype = np.float64) % 2
+        
+    if N_sites % 2 == 1:
+        print("Odd system sizes don't have CDW phases!!!! Exiting")
+        return
+    
+    if rng is None:
+        print("Using default rng with OS etropy as a seed")
+        rng = default_rng()
+    print(f'RNG: {rng}, rng.bit_generator.state: {rng.bit_generator.state}')
+        
+    t0 = time()
+    parameters.update(J_matrix = interaction_matrix(N_sites, dtype = np.float64, **parameters))
+    current_Ff, current_Fc, evals, evecs = solve_H(state=state, **parameters)
+    if logger == None: logger = Eigenspectrum_IPR_all()
+    logger.start(N_steps // thin, N_sites)
+    logger.MH_proposal_rates, logger.accept_rates, logger.proposal_rates, logger.classical_accept_rates = np.zeros(shape = (N_sites+1,4)).T
+    logger.proposal_counts = []
+    cache = dict()
+    beta = parameters['beta']
+    
+    update_batch = max(1 ,(N_steps + N_burn_in) // 10)
+    for i in range(N_steps + N_burn_in):
+        if (batch_info and i%update_batch == 0):
+            c_r = (np.sum(logger.classical_accept_rates) / max(1, np.sum(logger.proposal_rates)))
+            q_r = np.sum(logger.accept_rates) / max(1, np.sum(logger.classical_accept_rates))
+            o_r = np.sum(logger.accept_rates) / max(1, np.sum(logger.proposal_rates))
+            print(f"N = {N_sites}: {100*i/(N_steps+N_burn_in):.0f}% through after {(time() - t0)/60:.2f}m \
+            acceptance rates: classical = {c_r*100:.2g}% quantum = {q_r*100:.2g}% overall = {o_r*100:.2g}%")
+        
+        #I realised late that all the autocorrelation times seem to scale with N_sites**2, so I divide by 100
+        #so that jobs of size 100 will do the number of iterations as before
+        substeps = 1 if raw_steps else max(1, N_sites*N_sites // 100)
+        for j in range(substeps): 
+            #sample from the proposal distribution 
+            new_state = rejection_sample_q(state, rng, parameters, proposal, proposal_args)
+        
+            #now solve the full system using our state which is distributed according to q(a -> b)
+            new_Ff, new_Fc, evals, evecs = solve_H(new_state, **parameters)
+            dFc = new_Fc - current_Fc
+            dFf = new_Ff - current_Ff
+            dF = dFc + dFf
+            if dFc < 0 or rng.random() < exp(- beta * dFc):
+                state, current_Ff, current_Fc = new_state, new_Ff, new_Fc
+                
+        if i >= N_burn_in and i % thin == 0:
+            j = (i - N_burn_in) // thin
+            logger.update(j, current_Ff, current_Fc, state, evals, evecs, **parameters)
+    
+    logger.last_state = state
+    p_acc = sum(logger.accept_rates) / sum(logger.proposal_rates)
+    params_sans_matrix = parameters.copy()
+    params_sans_matrix.update(J_matrix = 'suppressed for brevity')
+    if warnings:
+        if p_acc < 0.2 or p_acc > 0.5: print(f"Warning, p_acc = {p_acc}, {params_sans_matrix}")
+    if info:
+        p_propose = logger.proposal_rates / sum(logger.proposal_rates)
+        p_classical_accept = logger.classical_accept_rates / sum(logger.classical_accept_rates) / p_propose
+        p_accept = logger.accept_rates / sum(logger.accept_rates) / p_propose
+        prop = ' '.join(f'{p:.0f}%' for p in 100 * p_propose)
+        c_acc = ' '.join(f'{p:.0f}%' for p in 100 * p_classical_accept)
+        acc = ' '.join(f'{p:.0f}%' for p in 100 * p_accept)
+        pert_saving = 100 * (1 - sum(logger.classical_accept_rates) / sum(logger.proposal_rates))
+        print(f"""
+        Number of burn in steps = {N_burn_in}
+        Number of MCMC steps = {N_steps}
+        Thinning = {thin}
+        Proposal function = {proposal.__name__}
+        Acceptance function = {accept_function.__name__}
+        logger = {logger}
+        parameters = {parameters}
+        Chance of proposing an N spin flip: {prop}
+        Chance of classically accepting an N spin flip: {c_acc} 
+        Chance of accepting an N spin flip: {acc}
+        Percentage of the time the matrix is not diagonalised: {pert_saving:.0f}%
+        """)
+        
+    #print(f'acceptance probability: {accepted / N_sites / (N_steps + N_burn_in)}, mu = {mu}')
+    return logger.return_vals()
+            
 ### Datalogger #######################################################################################################################################################
 
 #a catch all datalogger which I use for everything
