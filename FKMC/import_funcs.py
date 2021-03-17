@@ -709,7 +709,7 @@ def get_data_funcmap_chain_ext(this_run,
         Total: {timefmt(np.nansum(o.time))}
     """[1:]
     logger.info(infostring)
-    update_description(o.this_run.stem, infostring)
+#     update_description(o.this_run.stem, infostring)
     
     return o
 
