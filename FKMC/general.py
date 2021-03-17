@@ -30,34 +30,34 @@ def solve_H(state, mu, beta, U, J_matrix, t, **kwargs):
         evals, evecs, info =  dstev(d = U*(state - 1/2) - muc, e =-t*np.ones(state.shape[0] - 1), compute_v = True)
         Ff = - U/2*np.sum(state - 1/2) - muf*np.sum(state) + (state - 1/2).T @ J_matrix @ (state - 1/2)
         Fc = - 1/beta * np.sum(np.log(1 + np.exp(- beta * evals)))
-    
+
     return Ff, Fc, evals, evecs
 
 def solve_H_vectorised(states, mu, beta, U, J_matrix, t, **kwargs):
     assert(((states == 0) | (states == 1)).all()) #I alsways forget that states should be 0s and 1s
     R, N = states.shape# = (disorder realisations, system size)
-    
+
     muf = muc = mu
     evals = np.empty(shape = states.shape, dtype = np.float64)
     evecs = np.empty(shape = states.shape + (states.shape[-1],), dtype = np.float64)
     e = -t*np.ones(states.shape[-1] - 1)
     ds = U*(states - 1/2) - muc
-    
+
     for i in range(R):
         evals[i], evecs[i] = eigh_tridiagonal(d = ds[i], e = e, lapack_driver = 'stev')
-    
+
     #the below is a vectorised version of:
     #Ff = - U/2*np.sum(state - 1/2) - muf*np.sum(state) + (state - 1/2).T @ J_matrix @ (state - 1/2)
     #Fc = - 1/beta * np.sum(np.log(1 + np.exp(- beta * evals)))
-    
+
     S = np.sum(states, axis = -1)
     t = (states - 1/2)
     #shapes(t, J, t) = [(R, N), (N, N), (R, N)] giving contraction ij,ik,ik -> i
     inner_prod = np.einsum('ij,jk,ik -> i', t, J_matrix, t, optimize = 'greedy')
-    
+
     Ff = - U/2*(S - N/2) - muf*S + inner_prod
     Fc = - 1/beta * np.sum(np.log(1 + np.exp(- beta * evals)), axis = -1)
-    
+
     #shapes(Ff, Fc, evals, evecs) = [(R,), (R,), (R, N), (R, N, N)]
     return Ff, Fc, evals, evecs
 
@@ -65,8 +65,8 @@ def moments_about_zero(data, n):
     powers = np.arange(0,5)
     N = data.shape[0]
     return (data[None, :]**powers[:, None]).sum(axis = -1) / N
-    
-    
+
+
 def moments_about_mean(data, n):
     powers = np.arange(0,5)
     mean = np.average(data)
@@ -103,7 +103,7 @@ def convert_to_central_moments(non_central_moments):
 #    IPR = smooth(IPR, scale = 1, axis = -1)
 
 # Step 0 happens in the montecarlo routine itself
-# There is currently a slight mismatch in that get_data_structured does step 1 while 
+# There is currently a slight mismatch in that get_data_structured does step 1 while
 # get_data_func does steps 1 and 2. Beware of this!!!!
 # Examples usage below:
 """
@@ -150,10 +150,10 @@ def normalise_IPR(DOS_raw, IPR_raw):
     'take raw histogram values of DOS and IPR, do IPR = IPR/DOS'
     #prepare a version of E_hist with no zeros, and a version of IPR_hist with no infinities
     DOS_nonzero = np.where(DOS_raw > 0, DOS_raw, 1)
-    
+
     DOS = DOS_raw #doesn't actually need an processing of this form
     IPR = np.where(DOS_raw > 0, IPR_raw/DOS_nonzero, 0)
-    
+
     return DOS, IPR
 
 def smooth(s, scale = 1, axis = -1):
@@ -183,23 +183,23 @@ def index_histogram(bin_edges, data):
 def index_histogram_array(bin_edges, data):
     """
     A vectorised version of the above that takes data with shape (..., N) and gives out bin indices with shape (..., len(bin_edges)-1)
-    
+
     usage:
-    
+
     E_bins = np.linspace(-6, 6, 500 + 1)
     E_hist, _, indices = index_histogram_array(E_bins, E_vals)
     IPR_hist = sort_IPRs(indices, IPRs, E_bins)
 
                    bins:   0 1 2 3     len(a) - 1
-                          _|_|_|_|    _|_ 
+                          _|_|_|_|    _|_
     searchsorted values:  0 1 2 3 ...   len(a)
-    
+
     With the default side = 'left' this returns i such that a[i-1] < v <= a[i]
     where a are the bin_edges and v the data
     hence 0 means the data is below the minimum bin and len(a) means the data is above the maximum bin
-    
+
     the maximum value returned by searchsorted is len(bin_edges)
-    bincount returns an array with an entry for the number of 
+    bincount returns an array with an entry for the number of
     occurances of all the integers from 0 to len(bin_edges)
     hence the length of hist is a max len(bin_edges) + 1
     """
@@ -212,12 +212,12 @@ def index_histogram_array(bin_edges, data):
 
 def sort_IPRs(indices, IPRs, E_bins):
     """See above for usage"""
-    
+
     o_shape = IPRs.shape
     IPRs = IPRs.reshape(-1, o_shape[-1])
     indices = indices.reshape(-1, o_shape[-1])
     IPR_hist = np.full(fill_value = np.nan, shape = (IPRs.shape[0], E_bins.shape[0] - 1))
-    
+
     for i, IPR, index in zip(count(), IPRs, indices):
         res = np.bincount(index, weights=IPR, minlength = E_bins.shape[0] + 1)[1:-1]
         res[1] += res[0]
@@ -246,19 +246,19 @@ def compute_IPR_and_DOS_histograms(raw_eigenvals, raw_IPRs, E_bins, bootstrap_bi
     1) transform from lists of energies and IPR observations to sum of:
         sum_DOS_ik: the number of observations of energy in each bin k at each sys config i
         sum_IPR_ik: the sum of IPRs for states in energy bin k at each sys config i
-        
+
     2) estimate errors:
         DOS by simply binning
         IPR by estimating IPR = sum_IPR / sum_DOS at each sys config and binning
-        
+
     3) take means of sum_DOS and sum_IPR
 
-    4) calculate 
+    4) calculate
         IPR = <sum_IPR> / <sum_DOS>
         DOS = sum_DOS / energy_bin_width / system_size
-    
+
     5) smooth out the spikieness of the resulting histogram using smooth
-    
+
     Crucially the mean is taken before the ratio, doing it the other way doesn't seem to work.
     '''
     #take lists of IPR and eigenvalues and bin them into histograms
@@ -267,23 +267,23 @@ def compute_IPR_and_DOS_histograms(raw_eigenvals, raw_IPRs, E_bins, bootstrap_bi
 
     #the below method splits into bins to deal with autocorrelation, set N_bins = 1 to ignore autocorellation
     sum_dDOS = binned_error_estimate_multidim(sum_DOS, N_bins = bootstrap_bins, axis = 0)
-    
+
     #NB you can't caculate the error in sum_IPR because that is highly correlated with how many states appear in a bin!!!
     _, non_meaned_IPR_ratios = normalise_IPR(sum_DOS, sum_IPR)
     dIPR = binned_error_estimate_multidim(non_meaned_IPR_ratios, N_bins = bootstrap_bins, axis = 0)
-    
+
     #now take the means and then take the ratio again!
     sum_DOS = sum_DOS.mean(axis = 0)
     sum_IPR = sum_IPR.mean(axis = 0)
-    
+
     #divide <IPR> by <DOS> without incurring divide by errors where DOS = 0, set IPR = 0 there too
     _, IPR = normalise_IPR(sum_DOS, sum_IPR)
-    
+
     M, N = raw_eigenvals.shape
     bin_width = E_bins[1] - E_bins[0]
     a = bin_width * N
     DOS, dDOS = sum_DOS / a, sum_dDOS / a
-    
+
     #shapes(DOS=DOS, dDOS=dDOS, IPR=IPR, dIPR=dIPR)
     return DOS, dDOS, IPR, dIPR
 
@@ -302,17 +302,17 @@ def shapes(*args, **kwargs):
     'print out the shapes of multiple dats structures'
     out = []
     for a in args:
-        try: 
+        try:
             out.append(str(a.shape))
-        except AttributeError: 
+        except AttributeError:
             out.append(str(type(a)))
     for name, value in kwargs.items():
-        try: 
+        try:
             out.append(f'{name}.shape = {value.shape}')
-        except AttributeError: 
+        except AttributeError:
             out.append(f'type({name}) = {type(value)}')
     print(', '.join(out))
-    
+
 def find_zero_crossings(f):
     'given a 1d array, finds the first index where f has a sign change or is 0'
     s = np.sign(f)
@@ -338,7 +338,7 @@ def diag2column(arr):
         out[i] = np.roll(arr[i], -i)
     return out
 
-def spread(ax, X, Y, dY, alpha = 0.3, **kwargs): 
+def spread(ax, X, Y, dY, alpha = 0.3, **kwargs):
     print('Warning! spread is now defined in FKMC.plotting not FKMC.general!')
     from FKMC.plotting import spread as s
     return s(*args, **kwargs)
@@ -359,7 +359,7 @@ def scaling_dimension(Ns, IPR, dIPR, use_true_errors = True):
     else:
         (m, c), cov = np.ma.polyfit(X, Y, deg = 1, cov=True)
     dm, dc = np.sqrt(np.einsum('iik -> ik', cov))
-    
+
     return m, c, dm, dc
 
 
@@ -372,12 +372,12 @@ def tridiagonal_diagonalisation_benchmark(M = 100, N = 250):
     states = np.random.choice([0,1], size = [M, N])
     e = -np.ones(N - 1)
     ds = 5*(states - 1/2)
-    
+
     evals = np.zeros(shape = [M,N])
     evecs = np.zeros(shape = [M,N,N])
     for i in range(M):
         evals[i], evecs[i] = eigh_tridiagonal(d = ds[i], e = e, lapack_driver = 'stev')
-        
+
     return time() - t
 
 def interpolate_IPR(E_bins, unsmoothed_DOS, IPR, dIPR):
@@ -385,7 +385,7 @@ def interpolate_IPR(E_bins, unsmoothed_DOS, IPR, dIPR):
     _DOS = unsmoothed_DOS.reshape(newshape)
     _IPR = IPR.reshape(newshape)
     _dIPR = dIPR.reshape(newshape)
-    
+
     for i, DOS, I, dI in zip(count(), _DOS, _IPR, _dIPR):
         ei = DOS > 0
         if any(ei):
@@ -398,7 +398,7 @@ def interpolate_IPR(E_bins, unsmoothed_DOS, IPR, dIPR):
         else:
             _IPR[i] = E_bins[1:] * np.NaN
             _dIPR[i] = E_bins[1:] * np.NaN
-
+            
 """
 Retired code left here just in case I find a reference to it and have forgotten what it did.
 
@@ -411,27 +411,27 @@ def interaction_matrix_2(N, alpha, J, normalise = True, dtype = np.float64, **kw
     row0 = row0 / np.sum(np.abs(row0))
     row0 = J * row0
     return row0
-    
-    
+
+
 def compute_IPR_and_DOS_histograms_ratio_then_mean(raw_eigenvals, raw_IPRs, E_bins, bootstrap_bins = 1):
-    #create sums of observations, for DOS just count the number of states seen in each bin 
+    #create sums of observations, for DOS just count the number of states seen in each bin
     M, N = raw_eigenvals.shape
     sum_DOS, _, indices = index_histogram_array(E_bins, raw_eigenvals)
     sum_IPR = sort_IPRs(indices, raw_IPRs, E_bins)
-    
+
     #normalise the IPR by the number of observations, but set to NaN when there are none.
     _, IPR = normalise_IPR(sum_DOS, sum_IPR)
-    
+
     #normalise by bin_width so that different binning doesn't affect the value
     #normalise by the system size so that plotting different ones together works
     #the outcome is that sum(DOS * bin_width) == 1
     bin_width = E_bins[1] - E_bins[0]
     DOS = sum_DOS / (N * bin_width)
-    
+
     #the below method splits into bins to deal with autocorrelation, set N_bins = 1 to ignore autocorellation
     dDOS = binned_error_estimate_multidim(DOS, N_bins = bootstrap_bins, axis = 0)
     dIPR = binned_error_estimate_multidim(IPR, N_bins = bootstrap_bins, axis = 0)
-    
+
     DOS = DOS.mean(axis = 0)
     IPR = IPR.mean(axis = 0)
 
@@ -441,29 +441,29 @@ def compute_IPR_and_DOS_histograms_1D(raw_eigenvals, raw_IPRs, E_bins, bootstrap
     raw_eigenvals = raw_eigenvals.flatten()
     raw_IPRs = raw_IPRs.flatten()
     N, = raw_eigenvals.shape
-    
+
     sum_DOS, _, indices = index_histogram_array(E_bins, raw_eigenvals)
     sum_IPR = sort_IPRs(indices, raw_IPRs, E_bins)
     sum_squared_IPR = sort_IPRs(indices, raw_IPRs**2, E_bins)
-    
+
     #normalise the IPR by the number of observations, but set to NaN when there are none.
     _, IPR = normalise_IPR(sum_DOS, sum_IPR)
     _, IPR_squared = normalise_IPR(sum_DOS, sum_squared_IPR)
-    
+
     #assume poissonian errors because it's just counting
     #error of a poisson is sqrt(N)
     #error in the mean of a poisson in 1 / sqrt(N)
-    dsum_DOS = 1 / np.sqrt(sum_DOS) 
+    dsum_DOS = 1 / np.sqrt(sum_DOS)
     #use standard error in the mean = sqrt(<x**2> - <x>**2) / sqrt(N)
-    dIPR = np.sqrt(IPR_squared - IPR**2) / np.sqrt(N) 
-    
+    dIPR = np.sqrt(IPR_squared - IPR**2) / np.sqrt(N)
+
     #normalise by bin_width so that different binning doesn't affect the value
     #normalise by the system size so that plotting different ones together works
     #the outcome is that sum(DOS * bin_width) == 1
     bin_width = E_bins[1] - E_bins[0]
     DOS = sum_DOS / (N * bin_width)
     dDOS = dsum_DOS / (N * bin_width)
-    
+
     return DOS, dDOS, IPR, dIPR
 
 
