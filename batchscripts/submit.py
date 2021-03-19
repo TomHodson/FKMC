@@ -71,7 +71,7 @@ if args.chain_exts != None:
     
 if args.indices == None:
     args.indices = (0, batch_params.total_jobs)
-    print(f'No indices specified so using {(0, batch_params.total_jobs)}')
+    print(f'No indices specified so using {(0, batch_params.total_jobs)} from batch_params')
     
 ### make the job which gives access to some platform specific info like paths and such
 #if args.debug: 
