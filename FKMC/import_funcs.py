@@ -146,7 +146,7 @@ class extractStates(object):
         #use a list to store the differently shaped arrays
         shape = (N_jobs, observables.max_MC_step)
         observables.flat[self.obsname] = [
-            np.full(shape=(N_jobs, observables.max_MC_step, N), 
+            np.full(shape=(N_jobs, observables.max_MC_step, int(N)), 
                     fill_value = np.nan, 
                     dtype = data.dtype)
                 for N in Ns]
@@ -158,7 +158,10 @@ class extractStates(object):
     def copy(self, observables, j, datafile):
         for i in range(len(observables.Ns)):
             if datafile[i] == None: continue #fail gracefully on partially computed results
-            observables.flat[self.obsname][i][j] = getattr(datafile[i], self.obsname)
+            try:
+                observables.flat[self.obsname][i][j] = getattr(datafile[i], self.obsname)
+            except Valueerror as e:
+                print(f'failed to copy states with error {e}')
                 
               
     def reshape(self, structure_dims, observables):
@@ -571,6 +574,7 @@ def get_data_funcmap_chain_ext(this_run,
             strict_chain_length = True,
             chain_length = None,
             task_id_range = None,
+            track_acceptance = True,
             ):
     
     '''
@@ -634,9 +638,11 @@ def get_data_funcmap_chain_ext(this_run,
     logger.info(f'Using chain length {o.N_chains}')
     if chain_length is not None: o.N_chains = chain_length
     
-    o.functions += [extract('time'), 
-                  mean_over_MCMC('accept_rates', N_error_bins = 1),
-                  mean_over_MCMC('proposal_rates', N_error_bins = 1)]
+    if track_acceptance:
+        logger.info(f'Auto adding time, accept_rate and proposal_rates to the logged variables')
+        o.functions += [extract('time'), 
+                      mean_over_MCMC('accept_rates', N_error_bins = 1),
+                      mean_over_MCMC('proposal_rates', N_error_bins = 1)]
     
     if len(datafiles) == 0: 
         logger.error("NO DATA FILES FOUND");
@@ -645,16 +651,22 @@ def get_data_funcmap_chain_ext(this_run,
     #get stuff from an an example datafile
     d = Munch(np.load(next(iter(datafiles.values())), allow_pickle = True))
     parameters = d['parameters'][()]
-    MCMC_params = d['MCMC_params'][()]
+    
+    if "MCMC_params" in d:
+        MCMC_params = d['MCMC_params'][()]
+        logger.info(f"MCMC_params keys: {list(MCMC_params.keys())} \n")
+        o.original_N_steps = MCMC_params['N_steps']
+        o.thin = MCMC_params['thin']
+        o.N_steps = o.original_N_steps // o.thin
+        o.max_MC_step = o.N_steps * o.N_chains
+    else:
+        o.original_N_steps = 1
+        o.thin = 1
+        o.N_steps = 1
+        o.max_MC_step = 1
+        
     
     logger.info(f'Logger keys: {dir(d.logs[0])} \n')
-    logger.info(f"MCMC_params keys: {list(MCMC_params.keys())} \n")
-    
-    o.original_N_steps = MCMC_params['N_steps']
-    o.thin = MCMC_params['thin']
-    o.N_steps = o.original_N_steps // o.thin
-    o.max_MC_step = o.N_steps * o.N_chains
-    
     logger.info(f'Overall steps = {o.N_steps * o.N_chains}')
     
     logger.debug(list(zip(count(), o.structure_names, o.structure_dims)))
@@ -688,7 +700,6 @@ def get_data_funcmap_chain_ext(this_run,
     f"""
     Completed jobs:?
     MCMC Steps: {o.N_chains} chains of {o.original_N_steps} for {o.original_N_steps*o.N_chains} with thinning = {o.thin} for {o.N_steps*o.N_chains} recorded steps
-    Burn in: {Munch(MCMC_params).N_burn_in}
     Structure_names: {dict(zip(o.structure_names, o.structure_dims))}
     Ns = {o.Ns}
     Runtimes: 
@@ -706,13 +717,15 @@ def incremental_get_data_funcmap_chain_ext(o,
             functions = [],
             strict_chain_length = True,
             task_id_range = None,
+            track_acceptance = True,
             ):
     
     '''
     '''
-    o.functions = functions + [extract('time'), 
-              mean_over_MCMC('accept_rates', N_error_bins = 1),
-              mean_over_MCMC('proposal_rates', N_error_bins = 1)]
+    if track_acceptance:
+        o.functions = functions + [extract('time'), 
+                  mean_over_MCMC('accept_rates', N_error_bins = 1),
+                  mean_over_MCMC('proposal_rates', N_error_bins = 1)]
     
     if task_id_range is not None: o.task_id_range = task_id_range
     
@@ -767,7 +780,9 @@ import shutil
 def incremental_load(folder, functions, 
                      force_reload = False, 
                      force_to_use_pickled = False,
-                     loglevel = logging.DEBUG):
+                     loglevel = logging.DEBUG,
+                    **kwargs):
+    
     folder = Path(folder).expanduser()
     load_filepath = folder / 'loaded_data.pickle'
     logging.basicConfig()
@@ -775,7 +790,7 @@ def incremental_load(folder, functions,
     logger.setLevel(loglevel)
     
     if force_reload or not load_filepath.exists():
-        o = get_data_funcmap_chain_ext(folder, functions = functions)
+        o = get_data_funcmap_chain_ext(folder, functions = functions, **kwargs)
 
     else: #we know the file exists and we're not forcing a reload
         with open(load_filepath, 'rb') as file:
@@ -783,7 +798,7 @@ def incremental_load(folder, functions,
             if force_to_use_pickled: 
                 return o
 
-        incremental_get_data_funcmap_chain_ext(o, functions = functions)
+        incremental_get_data_funcmap_chain_ext(o, functions = functions, **kwargs)
 
     if load_filepath.exists(): shutil.copy(load_filepath, folder / 'loaded_data.pickle.backup')
 
