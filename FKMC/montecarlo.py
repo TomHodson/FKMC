@@ -367,6 +367,38 @@ class Mf_moments(object):
 
     def return_vals(self):
         return self
+    
+class all_and_eigenvects(object):
+    def __init__(self, bins = 70, limit = 5, N_cumulants = 5):
+        self.N_cumulants = N_cumulants
+        self.eigenval_bins = np.linspace(-limit, limit, bins + 1)
+    
+        
+    def start(self, N_steps, N_sites):
+        self.N_sites = N_sites
+        self.N_steps = N_steps
+        self.A = 2*(np.arange(N_sites) % 2) - 1
+        self.Ff, self.Fc, self.Nf, self.Nc = np.zeros((N_steps,4), dtype = np.float64).T
+        self.state = np.zeros((N_steps,N_sites), dtype = np.float64)
+        self.powers = np.arange(self.N_cumulants)
+        self.Mf_moments = np.zeros((self.N_cumulants, N_steps), dtype = np.float64)
+        self.state, self.eigenvals, self.IPRs = np.zeros((3,N_steps,N_sites), dtype = np.float64)
+        self.eigenvects = np.zeros((N_steps,N_sites,N_sites), dtype = np.float64)
+    
+    def update(self, j, Ff, Fc, state, evals, evecs, mu, beta, J_matrix, **kwargs):
+        self.Ff[j] = Ff
+        self.Fc[j] = Fc
+        self.Nf[j] = np.sum(state) / self.N_sites
+        self.Nc[j] = np.sum(1/(1 + np.exp(beta * evals))) / self.N_sites
+        self.Mf_moments[:, j] = np.sum(2*(state - 1/2) * self.A / self.N_sites)**self.powers
+        self.state[j] = state
+        
+        self.eigenvals[j] = evals
+        self.IPRs[j] = ((evecs * np.conj(evecs))**2).sum(axis = 0)
+        self.eigenvects[j] = evecs
+
+    def return_vals(self):
+        return self
 
 '''
 class Eigenspectrum_IPR(object):
