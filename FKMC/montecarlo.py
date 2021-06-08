@@ -374,7 +374,7 @@ class Mf_moments(object):
     def update(self, j, Ff, Fc, state, evals, evecs, mu, beta, J_matrix, **kwargs):
         self.Mf_moments[:, j] = np.sum(2*(state - 1/2) * self.A / self.N_sites)**self.powers
         f = fermi_function(evals, beta = beta)
-        self.fermion_order[j] = np.einsum('k,i,ik', f, self.A, np.conj(evecs)*evecs) / self.N_sites * 2
+        self.fermion_order[j] = np.abs(np.einsum('k,i,ik', f, self.A, np.conj(evecs)*evecs) / self.N_sites * 2)
 
     def return_vals(self):
         return self
