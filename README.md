@@ -1,7 +1,10 @@
 ## Markov Chain Montecarlo for Quantum Tight Binding Models with Classical Sectors.
 [![DOI](https://zenodo.org/badge/174118363.svg)](https://zenodo.org/badge/latestdoi/174118363)
 
-This repo contains code to perform [Markov Chain Monte Carlo][mcmc] over [the Falikov-Kimball model][fk]. It was written for the publication "Long-Range Falikov Kimball Model in One Dimension: Phase Transition, Disorder-Free Localisation and Delocalisation" coming soon to the arXiv! I provide the code here as a record of what was done, it's likely not reproducable without extra help but if you wish to know more please get in touch.
+This repo contains code to perform [Markov Chain Monte Carlo][mcmc] over [the Falikov-Kimball model][fk] for the publication "One-dimensional long-range Falikov-Kimball model: Thermal phase transition and disorder-free localization available in [PRB][prb] or on the [arXiv][arxiv]. I provide the code here as a record of what was done, it's likely not reproducable without extra help but if you wish to know more please get in touch.
+
+[prb]: https://journals.aps.org/prb/abstract/10.1103/PhysRevB.104.045116
+[arxiv]: https://arxiv.org/abs/2103.11735
 
 ---
 
