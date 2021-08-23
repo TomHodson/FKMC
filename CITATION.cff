@@ -1,0 +1,35 @@
+# YAML 1.2
+---
+abstract: "Software to perform Markov Chain Monte Carlo over the Falikov-Kimball model for the publication \"One-dimensional long-range Falikov-Kimball model: Thermal phase transition and disorder-free localization\" available in PRB or on the arXiv."
+authors: 
+  - affiliation: "Imperial College London"
+    family-names: Hodson
+    given-names: Thomas
+    orcid: "https://orcid.org/0000-0002-4121-4772"
+cff-version: "1.1.0"
+date-released: "2021-03-19"
+doi: "10.5281/zenodo.4593904"
+identifiers: 
+  - description: The archived snapshot of the first release of the software.
+    type: doi
+    value: "10.5281/zenodo.4620805"
+keywords: 
+  - MCMC
+  - Quantum
+license: "CC-BY-NC-4.0"
+message: "If you use this software, please cite both the article from preferred-citation and the software itself."
+repository-code: "https://github.com/TomHodson/FKMC"
+title: "FKMC: MCMC for quantum systems with classical subsystems"
+version: "1.0"
+preferred-citation:
+  authors:
+    - family-names: Hodson
+      given-names: Thomas
+    - family-names: Willsher
+      given-names: Josef
+    - family-names: Knolle
+      given-names: Johannes
+  title: "One-dimensional long-range Falikov-Kimball model: Thermal phase transition and disorder-free localization"
+  type: article
+  year: 2021
+...
