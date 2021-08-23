@@ -15,8 +15,8 @@ make_initial_state = lambda N: np.arange(N, dtype = np.float64) % 2 #a CDW initi
 J = 5
 U = 5
 alpha = 1.25
-jobdir = Path('~/HPC_data/local_run_data/run_9_T=2.5_U=5').expanduser()
-jobdir.mkdir(parents=False, exist_ok=False)
+jobdir = Path('~/HPC_data/local_run_data/test_fermion_order').expanduser()
+jobdir.mkdir(parents=False, exist_ok=True)
 
 logs = np.empty(shape = len(Ns), dtype = object)
 previous_states = [make_initial_state(N) for N in Ns]
@@ -32,7 +32,7 @@ for j in range(10000):
                 N_steps = int(100),
                 N_burn_in = int(0),
                 thin = 10,
-                logger = Eigenspectrum_IPR_all(bins = 10000, limit = 20),
+                logger = Mf_moments(),
                 proposal = p_multi_site_uniform_reflect,
                 accept_function = perturbation_accept,
                 warnings = True,
