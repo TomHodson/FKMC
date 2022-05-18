@@ -1,4 +1,4 @@
-<h1 align="center">Markov Chain Montecarlo ⛓🎲 for Quantum Tight Binding Models with Classical Sectors.</h1>
+<h1 align="center">🎲⛓👉🧪  Markov Chain Montecarlo for Quantum Tight Binding Models with Classical Sectors.</h1>
 <p align="center">
     <em>Wanna draw thermal samples? Does your Hilbert space have untapped classical subsectors? Then you've come to the right place!</em>
 </p>
